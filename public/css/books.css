@@ -1,0 +1,21 @@
+.book-card {
+    width: 150px; /* Set a fixed width for a book-like shape */
+    flex: 0 0 auto; /* Prevents stretching */
+  }
+
+  .book-cover {
+    width: 100%;
+    height: 220px; /* Adjust height to resemble a book */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa; /* Light background in case image is missing */
+    border-radius: 5px; /* Optional rounded corners */
+  }
+
+  .book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fills the area properly */
+  }

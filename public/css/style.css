@@ -1,0 +1,54 @@
+body {
+    background-color: white;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #222;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    color: lightgray;
+}
+
+.books-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px;
+    white-space: nowrap;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #888 transparent;
+}
+
+.books-container::-webkit-scrollbar {
+    height: 8px; /* Adjust scrollbar height */
+}
+
+.books-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.books-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.book-card {
+    flex: 0 0 auto;
+    width: 200px; /* Adjust size */
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
