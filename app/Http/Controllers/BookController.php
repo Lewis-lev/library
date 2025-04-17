@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -30,12 +31,11 @@ class BookController extends Controller
             $query->orderBy('created_at', 'asc');
         }
 
-        $trendingBooks = Book::where('genre', 'Trending')->get();
-        $classicBooks = Book::where('genre', 'Classic')->get();
+        // Use the built query, not Book::all()
+        $books = $query->get();
 
-        return view('books.index', compact('trendingBooks', 'classicBooks'));
+        return view('books.index', compact('books'));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -53,11 +53,42 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
-            'genre' => 'required',
+            'publisher' => 'required',
             'quantity' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        Book::create($request->all());
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = uniqid('img_') . '.webp';
+            $savePath = storage_path('app/public/book_images/' . $filename);
+
+            try {
+                $imageContents = file_get_contents($image);
+                $imageResource = @imagecreatefromstring($imageContents);
+
+                if ($imageResource) {
+                    imagewebp($imageResource, $savePath);
+                    imagedestroy($imageResource);
+                    $imagePath = 'book_images/' . $filename;
+                } else {
+                    return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
+                }
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
+            }
+        }
+
+        Book::create([
+            'title' => $request->title,
+            'author' => $request->author,
+            'publisher' => $request->publisher,
+            'quantity' => $request->quantity,
+            'code' => 'BK-' . strtoupper(Str::random(6)),
+            'image' => $imagePath,
+        ]);
 
         return redirect()->route('books.index')->with('success', 'Book added successfully.');
     }
@@ -86,13 +117,14 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
-            'genre' => 'required',
+            'publisher' => 'required',
             'quantity' => 'required|integer',
         ]);
 
-        $book->udpate($request->all());
+        // Fix typo: update, not udpate
+        $book->update($request->all());
 
-        return redirect()->route('books.index')->with('success', 'Book update successfully.');
+        return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
 
     /**
@@ -102,6 +134,7 @@ class BookController extends Controller
     {
         $book->delete();
 
-        return redirect()->route('books.index')->with('Success', 'Book deletes successfully.');
+        // Use lowercase 'success' for flash message key
+        return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
 }

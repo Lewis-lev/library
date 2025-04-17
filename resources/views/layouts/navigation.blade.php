@@ -6,9 +6,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                @auth
                 <li class="nav-item">
                     <a class="nav-link active" href="#">Dashboard</a>
                 </li>
+                @endauth
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('books.index') }}">Books</a>
                 </li>

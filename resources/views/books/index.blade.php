@@ -10,6 +10,7 @@
         <form action="{{ route('books.index') }}" method="GET" class="d-flex">
             <input type="text" name="search" class="form-control me-2" placeholder="Search books..." value="{{ request('search') }}">
             <button type="submit" class="btn btn-primary">Search</button>
+
         </form>
 
         <form action="{{ route('books.index') }}" method="GET">
@@ -23,13 +24,18 @@
         </form>
     </div>
 
+    @if(auth()->user()->role === 'admin')
+    <a href="{{ route('books.create') }}" class="btn btn-primary mb-3">
+        <i class="fa-solid fa-plus"></i> Add New Book
+    </a>
+    @endif
+
     <!-- Trending Books Section -->
-    <h3 class="mt-4">Trending Books</h3>
+    <h3 class="mt-4">Books</h3>
     <div class="d-flex align-items-center">
-        <button class="btn btn-primary me-2" onclick="trendingScroll(-1)">&#9665;</button>
-
+        <button class="btn btn-primary me-2" onclick="booksScroll(-1)">&#9665;</button>
         <div id="trendingContainer" class="d-flex overflow-hidden" style="gap: 16px; width: 100%; white-space: nowrap;">
-            @foreach ($trendingBooks as $book)
+            @foreach ($books as $book)
             <div class="card text-center" style="width: 200px; min-width: 200px; flex-shrink: 0;">
                 @if ($book->image)
                 <img src="{{ asset('storage/' . $book->image) }}" class="card-img-top" style="height: 270px; object-fit: cover;">
@@ -44,50 +50,13 @@
             </div>
             @endforeach
         </div>
-
-        <button class="btn btn-primary ms-2" onclick="trendingScroll(1)">&#9655;</button>
+        <button class="btn btn-primary ms-2" onclick="booksScroll(1)">&#9655;</button>
     </div>
-
-    <!-- Classic Books Section -->
-    <h3 class="mt-4">Classic Books</h3>
-    <div class="d-flex align-items-center">
-        <button class="btn btn-primary me-2" onclick="classicScroll(-1)">&#9665;</button>
-
-        <div id="classicContainer" class="d-flex overflow-hidden" style="gap: 16px; width: 100%; white-space: nowrap;">
-            @foreach ($classicBooks as $book)
-            <div class="card text-center" style="width: 200px; min-width: 200px; flex-shrink: 0;">
-                @if ($book->image)
-                <img src="{{ asset('storage/' . $book->image) }}" class="card-img-top" style="height: 270px; object-fit: cover;">
-                @else
-                <img src="{{ asset('default-book.jpg') }}" class="card-img-top" style="height: 250px; object-fit: cover;">
-                @endif
-                <div class="card-body">
-                    <h6 class="card-title">{{ $book->title }}</h6>
-                    <p class="text-muted">Available</p>
-                    <a href="#" class="btn btn-primary btn-sm">View Details</a>
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-        <button class="btn btn-primary ms-2" onclick="classicScroll(1)">&#9655;</button>
-    </div>
-</div>
-<br>
 
 <!-- JavaScript for Scroll Buttons -->
 <script>
-    function trendingScroll(direction) {
+    function booksScroll(direction) {
         const container = document.getElementById('trendingContainer');
-        const scrollAmount = 1000;
-        container.scrollBy({
-            left: direction * scrollAmount,
-            behavior: 'smooth'
-        });
-    }
-
-    function classicScroll(direction) {
-        const container = document.getElementById('classicContainer');
         const scrollAmount = 1000;
         container.scrollBy({
             left: direction * scrollAmount,

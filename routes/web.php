@@ -9,7 +9,6 @@ Route::get('/', function () {
     return view('index');
 });
 
-// ✅ Everyone can access the books listing page
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
 Route::get('/dashboard', function () {
@@ -22,12 +21,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ✅ Only Admins can perform CRUD on books
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('books', BookController::class)->except(['index']);
 });
 
-// ✅ Only Borrowers can borrow/return books
 Route::middleware(['auth', 'role:borrower'])->group(function () {
     Route::post('/borrow/{book}', [BorrowController::class, 'borrow'])->name('borrow.book');
     Route::post('/return/{borrow}', [BorrowController::class, 'returnBo'])->name('return.book');
