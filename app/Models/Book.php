@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-
+use App\Models\Genres;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
@@ -14,4 +14,10 @@ class Book extends Model
         'code',
         'image',
     ];
+
+    public function genres()
+{
+    return $this->belongsToMany(Genre::class);
+}
+
 }

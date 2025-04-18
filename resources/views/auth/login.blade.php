@@ -5,9 +5,19 @@
     <h2 class="mb-4">Login</h2>
 
     @if (session('status'))
-        <div class="alert alert-success">
-            {{ session('status') }}
-        </div>
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $err)
+            <li>{{ $err }}</li>
+            @endforeach
+        </ul>
+    </div>
     @endif
 
     <form method="POST" action="{{ route('login') }}">
@@ -17,7 +27,7 @@
             <label for="email" class="form-label">Email</label>
             <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus>
             @error('email')
-                <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
@@ -25,7 +35,7 @@
             <label for="password" class="form-label">Password</label>
             <input id="password" class="form-control" type="password" name="password" required>
             @error('password')
-                <div class="text-danger">{{ $message }}</div>
+            <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 
@@ -36,7 +46,7 @@
 
         <div class="d-flex justify-content-between align-items-center">
             @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}">Forgot your password?</a>
+            <a href="{{ route('password.request') }}">Forgot your password?</a>
             @endif
 
             <button type="submit" class="btn btn-primary">Login</button>

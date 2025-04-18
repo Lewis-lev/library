@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -31,7 +32,6 @@ class BookController extends Controller
             $query->orderBy('created_at', 'asc');
         }
 
-        // Use the built query, not Book::all()
         $books = $query->get();
 
         return view('books.index', compact('books'));
@@ -42,11 +42,12 @@ class BookController extends Controller
      */
     public function create()
     {
-        return view('books.create');
+        $allGenres = Genre::all();
+        return view('books.create', compact('allGenres'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage, with image conversion to .webp in img/book_images.
      */
     public function store(Request $request)
     {
@@ -62,17 +63,21 @@ class BookController extends Controller
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $filename = uniqid('img_') . '.webp';
-            $savePath = storage_path('app/public/book_images/' . $filename);
+            $filename = uniqid('book_') . '.webp';
+            $relativePath = 'img/book_images/' . $filename;
+            $fullPath = Storage::disk('public')->path($relativePath);
 
             try {
-                $imageContents = file_get_contents($image);
-                $imageResource = @imagecreatefromstring($imageContents);
+                $imgContent = file_get_contents($image->getRealPath());
+                $gdImage = @imagecreatefromstring($imgContent);
 
-                if ($imageResource) {
-                    imagewebp($imageResource, $savePath);
-                    imagedestroy($imageResource);
-                    $imagePath = 'book_images/' . $filename;
+                if ($gdImage) {
+                    if (!file_exists(dirname($fullPath))) {
+                        mkdir(dirname($fullPath), 0755, true);
+                    }
+                    imagewebp($gdImage, $fullPath);
+                    imagedestroy($gdImage);
+                    $imagePath = $relativePath;
                 } else {
                     return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
                 }
@@ -90,9 +95,12 @@ class BookController extends Controller
             'image' => $imagePath,
         ]);
 
-        return redirect()->route('books.index')->with('success', 'Book added successfully.');
-    }
+        if ($request->has('genres')) {
+            $book->genres()->attach($request->input('genres'));
 
+            return redirect()->route('books.index')->with('success', 'Book added successfully.');
+        }
+    }
     /**
      * Display the specified resource.
      */
@@ -106,7 +114,8 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        return view('books.edit', compact('book'));
+        $allGenres = Genre::all();
+        return view('books.edit', compact('book', 'allGenres'));
     }
 
     /**
@@ -119,22 +128,63 @@ class BookController extends Controller
             'author' => 'required',
             'publisher' => 'required',
             'quantity' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        // Fix typo: update, not udpate
-        $book->update($request->all());
+        $book->update($data);
+        if ($request->has('genres')) {
+            $book->genres()->sync($request->input('genres'));
+        }
+
+        $data = $request->only(['title', 'author', 'publisher', 'quantity']);
+
+        // If a new image is uploaded, handle conversion, replace and delete old image
+        if ($request->hasFile('image')) {
+            // Remove previous image if exists
+            if ($book->image && Storage::disk('public')->exists($book->image)) {
+                Storage::disk('public')->delete($book->image);
+            }
+
+            $image = $request->file('image');
+            $filename = uniqid('book_') . '.webp';
+            $relativePath = 'img/book_images/' . $filename;
+            $fullPath = Storage::disk('public')->path($relativePath);
+
+            try {
+                $imgContent = file_get_contents($image->getRealPath());
+                $gdImage = @imagecreatefromstring($imgContent);
+
+                if ($gdImage) {
+                    if (!file_exists(dirname($fullPath))) {
+                        mkdir(dirname($fullPath), 0755, true);
+                    }
+                    imagewebp($gdImage, $fullPath);
+                    imagedestroy($gdImage);
+                    $data['image'] = $relativePath;
+                } else {
+                    return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
+                }
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()]);
+            }
+        }
+
+        $book->update($data);
 
         return redirect()->route('books.index')->with('success', 'Book updated successfully.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Book $book)
     {
+        // Delete associated image file if exists
+        if ($book->image && Storage::disk('public')->exists($book->image)) {
+            Storage::disk('public')->delete($book->image);
+        }
+
         $book->delete();
 
-        // Use lowercase 'success' for flash message key
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
 }
