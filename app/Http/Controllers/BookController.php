@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\Genre;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -57,6 +58,8 @@ class BookController extends Controller
             'publisher' => 'required',
             'quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'genres' => 'sometimes|array',
+            'genres.*' => 'exists:genres,genre_id'
         ]);
 
         $imagePath = null;
@@ -86,7 +89,7 @@ class BookController extends Controller
             }
         }
 
-        Book::create([
+        $book = Book::create([
             'title' => $request->title,
             'author' => $request->author,
             'publisher' => $request->publisher,
@@ -95,11 +98,13 @@ class BookController extends Controller
             'image' => $imagePath,
         ]);
 
-        if ($request->has('genres')) {
-            $book->genres()->attach($request->input('genres'));
+        $genreIds = array_unique(array_filter($request->input('genres', [])));
 
-            return redirect()->route('books.index')->with('success', 'Book added successfully.');
+        if (!empty($genreIds)) {
+            $book->genres()->sync($genreIds); //<-- use sync instead of attach!
         }
+
+        return redirect()->route('books.index')->with('success', 'Book added successfully.');
     }
     /**
      * Display the specified resource.
@@ -131,12 +136,12 @@ class BookController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
+        $data = $request->only(['title', 'author', 'publisher', 'quantity']);
+
         $book->update($data);
         if ($request->has('genres')) {
             $book->genres()->sync($request->input('genres'));
         }
-
-        $data = $request->only(['title', 'author', 'publisher', 'quantity']);
 
         // If a new image is uploaded, handle conversion, replace and delete old image
         if ($request->hasFile('image')) {

@@ -21,6 +21,34 @@
         @csrf
 
         <div class="mb-3">
+            <label class="form-label d-block mb-2">Genres</label>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach($allGenres as $genre)
+                    <input
+                        type="checkbox"
+                        class="btn-check"
+                        id="genre-btn-{{ $genre->genre_id }}"
+                        name="genres[]"
+                        value="{{ $genre->genre_id }}"
+                        autocomplete="off"
+                        {{ (is_array(old('genres')) && in_array($genre->genre_id, old('genres'))) ? 'checked' : '' }}
+                    >
+                    <label class="btn btn-outline-primary genre-btn"
+                        style="border-radius:18px;padding:0.375rem 1.2rem;"
+                        for="genre-btn-{{ $genre->genre_id }}">
+                        {{ $genre->name }}
+                    </label>
+                @endforeach
+            </div>
+            @error('genres')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+            <small class="form-text text-muted">
+                Click to select multiple genres. Selected genres turn solid. Click again to deselect.
+            </small>
+        </div>
+
+        <div class="mb-3">
             <label for="title" class="form-label">Book Title</label>
             <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
                 id="title" value="{{ old('title') }}" required>
@@ -36,19 +64,6 @@
             @error('author')
             <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-        </div>
-
-        <div class="mb-3">
-            <label for="genres" class="form-label">Genres</label>
-            <select name="genres[]" id="genres" class="form-select" multiple required>
-                @foreach($allGenres as $genre)
-                <option value="{{ $genre->id }}"
-                    {{ isset($book) && $book->genres->contains($genre->id) ? 'selected' : '' }}>
-                    {{ $genre->name }}
-                </option>
-                @endforeach
-            </select>
-            <small class="form-text text-muted">Hold Ctrl (Cmd on Mac) to choose multiple genres.</small>
         </div>
 
         <div class="mb-3">
@@ -86,3 +101,17 @@
     </form>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .btn-check:checked + .genre-btn, .genre-btn.active {
+        background-color: #6610f2;
+        color: white;
+        border-color: #4f1783;
+    }
+    .genre-btn {
+        transition: background-color 0.2s;
+        user-select: none;
+    }
+</style>
+@endpush
