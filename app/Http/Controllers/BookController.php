@@ -43,7 +43,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        $allGenres = Genre::all();
+        $allGenres = Genre::orderBy('name')->get();
         return view('books.create', compact('allGenres'));
     }
 
@@ -119,7 +119,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        $allGenres = Genre::all();
+        $allGenres = Genre::orderBy('name')->get();
         return view('books.edit', compact('book', 'allGenres'));
     }
 

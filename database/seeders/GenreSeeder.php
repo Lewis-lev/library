@@ -15,23 +15,30 @@ class GenreSeeder extends Seeder
     public function run(): void
     {
         //
+        // $genres = [
+        //     ['name' => 'Romance'],
+        //     ['name' => 'Fantasy'],
+        //     ['name' => 'Horror'],
+        //     ['name' => 'Science Fiction'],
+        //     ['name' => 'Comedy'],
+        //     ['name' => 'Psychology'],
+        //     ['name' => 'Thriller'],
+        //     ['name' => 'History'],
+        //     ['name' => 'History Fiction'],
+        //     ['name' => 'Mystery'],
+        //     ['name' => 'Biography'],
+        //     ['name' => 'Adventure'],
+        //     ['name' => 'Fiction'],
+        //     ['name' => 'Children'],
+        //     ['name' => 'Adult'],
+        //     ['name' => 'Non-Fiction'],
+        // ];
+
         $genres = [
-            ['name' => 'Romance'],
-            ['name' => 'Fantasy'],
-            ['name' => 'Horror'],
-            ['name' => 'Science Fiction'],
-            ['name' => 'Comedy'],
-            ['name' => 'Psychology'],
-            ['name' => 'Thriller'],
-            ['name' => 'History'],
-            ['name' => 'History Fiction'],
-            ['name' => 'Mystery'],
-            ['name' => 'Biography'],
-            ['name' => 'Adventure'],
-            ['name' => 'Fiction'],
-            ['name' => 'Children'],
-            ['name' => 'Adult'],
-            ['name' => 'Non-Fiction'],
+            ['name' => 'Crime'],
+            ['name' => 'Action'],
+            ['name' => 'Suspense'],
+            ['name' => 'Drama'],
         ];
 
         DB::table('genres')->insert($genres);

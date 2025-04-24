@@ -30,7 +30,6 @@
                         id="genre-btn-{{ $genre->genre_id }}"
                         name="genres[]"
                         value="{{ $genre->genre_id }}"
-                        autocomplete="off"
                         {{ (is_array(old('genres')) && in_array($genre->genre_id, old('genres'))) ? 'checked' : '' }}
                     >
                     <label class="btn btn-outline-primary genre-btn"
@@ -44,7 +43,7 @@
                 <div class="invalid-feedback d-block">{{ $message }}</div>
             @enderror
             <small class="form-text text-muted">
-                Click to select multiple genres. Selected genres turn solid. Click again to deselect.
+                Click to select multiple genres
             </small>
         </div>
 
