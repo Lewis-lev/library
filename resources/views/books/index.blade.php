@@ -1,40 +1,4 @@
-<style>
-    /* Slide down from top when appearing */
-    .toast.slide-top-in {
-        animation: slideTopIn .5s cubic-bezier(0.42, 0, 0.58, 1);
-    }
-
-    @keyframes slideTopIn {
-        from {
-            opacity: 0;
-            transform: translateY(-40px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Slide up when disappearing */
-    .toast.slide-top-out {
-        animation: slideTopOut .5s cubic-bezier(0.42, 0, 0.58, 1) forwards;
-    }
-
-    @keyframes slideTopOut {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        to {
-            opacity: 0;
-            transform: translateY(-40px);
-        }
-    }
-</style>
-
-@extends('layouts.guest')
+@extends('layouts.admin')
 
 @section('content')
     <div class="container">
@@ -97,6 +61,13 @@
                                 data-bs-toggle="modal" data-bs-target="#imageZoomModal" data-img="{{ asset('default-book.jpg') }}">
                         @endif
                         <div class="card-body d-flex flex-column">
+                            @auth
+                                @if(auth()->user()->role === 'admin')
+                                    <h6 class="card-title text-danger">
+                                        {{ $book->code }}
+                                    </h6>
+                                @endif
+                            @endauth
                             <h6 class="card-title">{{ $book->title }}</h6>
                             @auth
                                 @if(auth()->user()->role === 'admin')
@@ -174,13 +145,6 @@
             </div>
         </div>
 
-        <div id="notification-toast-container"
-            style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1055; min-width: 250px;">
-            <!-- Toasts will be appended dynamically -->
-        </div>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(function () {
@@ -200,8 +164,6 @@
             });
         </script>
 
-        <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 // Success alert timeout code...
@@ -223,78 +185,4 @@
                 });
             });
         </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                @if(auth()->check() && auth()->user()->role == 'admin')
-                    window.Echo = new Echo({
-                        broadcaster: "pusher",
-                        key: "{{ config('broadcasting.connections.pusher.key') }}",
-                        cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
-                        forceTLS: true
-                    });
-
-                    window.Echo.channel("admin-channel")
-                        .listen(".BookBorrowed", function (e) {
-                            let container = document.getElementById('notification-toast-container');
-                            if (!container) return;
-
-                            // Unique ID for each toast
-                            let toastId = 'toast-' + Date.now();
-
-                            // Message
-                            let message = `<strong class="me-auto"><i class="fa-solid fa-book-open"></i> Book Borrowed!</strong>
-                                    <div><b>${e.user.name}</b> just borrowed "<b>${e.book.title}</b>"</div>`;
-
-                            // Build the toast element
-                            let toastElem = document.createElement('div');
-                            toastElem.className = 'toast show align-items-center text-bg-primary border-0 mb-2 shadow slide-top-in';
-                            toastElem.id = toastId;
-                            toastElem.setAttribute('role', 'alert');
-                            toastElem.setAttribute('aria-live', 'assertive');
-                            toastElem.setAttribute('aria-atomic', 'true');
-                            toastElem.style.minWidth = '270px';
-                            toastElem.innerHTML = `
-                                      <div class="d-flex">
-                                        <div class="toast-body">
-                                          ${message}
-                                        </div>
-                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                                      </div>`;
-
-                            container.appendChild(toastElem);
-
-                            // Animation and remove handling
-                            toastElem.addEventListener('animationend', function animIn(e) {
-                                if (e.animationName === 'slideTopIn') {
-                                    toastElem.classList.remove('slide-top-in');
-                                    setTimeout(() => toastElem.classList.add('slide-top-out'), 3000);
-                                    toastElem.removeEventListener('animationend', animIn);
-                                }
-                            });
-                            toastElem.addEventListener('animationend', function animOut(e) {
-                                if (e.animationName === 'slideTopOut') {
-                                    toastElem.remove();
-                                    toastElem.removeEventListener('animationend', animOut);
-                                }
-                            });
-                            toastElem.querySelector('.btn-close').onclick = function () {
-                                toastElem.classList.add('slide-top-out');
-                                toastElem.classList.remove('show');
-                                setTimeout(() => toastElem.remove(), 350);
-                            };
-
-                            // ----- Badge: Real Time Quantity Update -----
-                            let badgeId = 'quantity-badge-' + (e.book.book_id ?? e.book.id);
-                            let badge = document.getElementById(badgeId);
-                            if (badge) {
-                                badge.textContent = 'Stock: ' + (e.book.quantity ?? 'N/A');
-                                badge.classList.add('bg-success');
-                                setTimeout(() => badge.classList.remove('bg-success'), 300);
-                            }
-                        });
-                @endif
-            });
-        </script>
-
 @endsection

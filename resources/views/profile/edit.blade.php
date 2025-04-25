@@ -57,7 +57,7 @@
     }
 </style>
 
-@extends('layouts.admin')
+@extends('layouts.borrower')
 @section('title', 'Profile Detail')
 
 @section('content')
