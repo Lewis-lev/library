@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Genre;
+use App\Models\Borrow;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\BookBorrowedNotification;
+use App\Events\BookBorrowed;
+use Illuminate\Support\Facades\Notification;
 
 class BookController extends Controller
 {
@@ -191,5 +197,27 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
+    }
+
+    public function borrow(Request $request, Book $book)
+    {
+        $user = Auth::user();
+
+        if ($book->quantity < 1) {
+            return redirect()->back()->with('error', 'Sorry, this book is currently not available.');
+        }
+
+        Borrow::create([
+            'user_id' => $user->user_id,
+            'book_id' => $book->book_id,
+            'status' => 'pending',
+        ]);
+
+        $book->decrement('quantity');
+
+        // fire broadcast event here!
+        event(new \App\Events\BookBorrowed($user, $book));
+
+        return redirect()->route('books.index')->with('success', 'Borrow request sent!');
     }
 }

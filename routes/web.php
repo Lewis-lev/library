@@ -11,6 +11,7 @@ Route::get('/', function () {
 });
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::post('/books/{book}/borrow', [BookController::class, 'borrow'])->name('books.borrow');
 
 Route::get('/dashboard', function () {
     return view('dashboard'); // Or whatever view you want
