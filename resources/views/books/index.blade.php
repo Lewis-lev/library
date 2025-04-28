@@ -2,10 +2,15 @@
 
 @section('content')
     <div class="container">
-        {{-- Success alert --}}
+        {{-- Alert --}}
         @if(session('success'))
             <div id="success-alert" class="alert alert-success alert-dismissible fade show mt-3" role="alert">
                 <strong>{{ session('success') }}</strong>
+            </div>
+        @endif
+        @if(session('error'))
+            <div id="success-alert" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                <strong>{{ session('error') }}</strong>
             </div>
         @endif
 
@@ -160,7 +165,7 @@
                             alertElement.style.display = 'none';
                         }
                     }
-                }, 3000);
+                }, 5000);
             });
         </script>
 

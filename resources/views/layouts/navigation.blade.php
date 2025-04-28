@@ -14,6 +14,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('books.index') }}">Books</a>
                 </li>
+                @auth
+                @if (auth()->user()->role === 'admin')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('borrow.index') }}">Borrow Log</a>
+                </li>
+                @endif
+                @endauth
             </ul>
 
             <ul class="navbar-nav">

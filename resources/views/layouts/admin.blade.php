@@ -27,6 +27,7 @@
             transform: translateY(0);
         }
 
+
         to {
             opacity: 0;
             transform: translateY(-40px);
@@ -48,6 +49,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
 </head>
 
@@ -65,80 +68,108 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.15.0/echo.iife.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 </body>
 
 <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                @if(auth()->check() && auth()->user()->role == 'admin')
-                    window.Echo = new Echo({
-                        broadcaster: "pusher",
-                        key: "{{ config('broadcasting.connections.pusher.key') }}",
-                        cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
-                        forceTLS: true
+    document.addEventListener('DOMContentLoaded', function () {
+        @if(auth()->check() && auth()->user()->role == 'admin')
+            window.Echo = new Echo({
+                broadcaster: "pusher",
+                key: "{{ config('broadcasting.connections.pusher.key') }}",
+                cluster: "{{ config('broadcasting.connections.pusher.options.cluster') }}",
+                forceTLS: true
+            });
+
+            window.Echo.channel("admin-channel")
+                .listen(".BookBorrowed", function (e) {
+                    let container = document.getElementById('notification-toast-container');
+                    if (!container) return;
+
+                    // Unique ID for each toast
+                    let toastId = 'toast-' + Date.now();
+
+                    // Message
+                    let message = `<strong class="me-auto"><i class="fa-solid fa-book-open"></i> Request sent!</strong>
+                                                        <div><b>${e.user.name}</b> just sent a request to borrow "<b>${e.book.title}</b>"</div>`;
+
+                    // Build the toast element
+                    let toastElem = document.createElement('div');
+                    toastElem.className = 'toast show align-items-center text-bg-primary border-0 mb-2 shadow slide-top-in';
+                    toastElem.id = toastId;
+                    toastElem.setAttribute('role', 'alert');
+                    toastElem.setAttribute('aria-live', 'assertive');
+                    toastElem.setAttribute('aria-atomic', 'true');
+                    toastElem.style.minWidth = '270px';
+                    toastElem.innerHTML = `
+                                            <div class="d-flex">
+                                            <div class="toast-body">
+                                                ${message}
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                            </div>`;
+                    container.appendChild(toastElem);
+
+                    // Animation and remove handling
+                    toastElem.addEventListener('animationend', function animIn(e) {
+                        if (e.animationName === 'slideTopIn') {
+                            toastElem.classList.remove('slide-top-in');
+                            setTimeout(() => toastElem.classList.add('slide-top-out'), 3000);
+                            toastElem.removeEventListener('animationend', animIn);
+                        }
                     });
+                    toastElem.addEventListener('animationend', function animOut(e) {
+                        if (e.animationName === 'slideTopOut') {
+                            toastElem.remove();
+                            toastElem.removeEventListener('animationend', animOut);
+                        }
+                    });
+                    toastElem.querySelector('.btn-close').onclick = function () {
+                        toastElem.classList.add('slide-top-out');
+                        toastElem.classList.remove('show');
+                        setTimeout(() => toastElem.remove(), 350);
+                    };
 
-                    window.Echo.channel("admin-channel")
-                        .listen(".BookBorrowed", function (e) {
-                            let container = document.getElementById('notification-toast-container');
-                            if (!container) return;
+                    // ----- Badge: Real Time Quantity Update -----
+                    // let badgeId = 'quantity-badge-' + (e.book.book_id ?? e.book.id);
+                    // let badge = document.getElementById(badgeId);
+                    // if (badge) {
+                    //     badge.textContent = 'Stock: ' + (e.book.quantity ?? 'N/A');
+                    //     badge.classList.add('bg-success');
+                    //     setTimeout(() => badge.classList.remove('bg-success'), 300);
+                    // }
+                });
+        @endif
+    });
+</script>
 
-                            // Unique ID for each toast
-                            let toastId = 'toast-' + Date.now();
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable({
+            responsive: true,
+            pageLength: 8,
+            lengthMenu: [[8, 25, 50, -1], [8, 25, 50, "All"]],
+            language: {
+                search: "🔎 Search:",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                lengthMenu: "Show _MENU_ entries"
+            },
+            dom: '<"d-flex justify-content-between align-items-center"lfB>rt<"d-flex justify-content-between align-items-center"ip>',
+            order: [[7, "desc"]], // Default sort by Borrow Date DESC
+        });
+    });
 
-                            // Message
-                            let message = `<strong class="me-auto"><i class="fa-solid fa-book-open"></i> Book Borrowed!</strong>
-                                            <div><b>${e.user.name}</b> just borrowed "<b>${e.book.title}</b>"</div>`;
-
-                            // Build the toast element
-                            let toastElem = document.createElement('div');
-                            toastElem.className = 'toast show align-items-center text-bg-primary border-0 mb-2 shadow slide-top-in';
-                            toastElem.id = toastId;
-                            toastElem.setAttribute('role', 'alert');
-                            toastElem.setAttribute('aria-live', 'assertive');
-                            toastElem.setAttribute('aria-atomic', 'true');
-                            toastElem.style.minWidth = '270px';
-                            toastElem.innerHTML = `
-                                <div class="d-flex">
-                                <div class="toast-body">
-                                    ${message}
-                                </div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>`;
-                            container.appendChild(toastElem);
-
-                            // Animation and remove handling
-                            toastElem.addEventListener('animationend', function animIn(e) {
-                                if (e.animationName === 'slideTopIn') {
-                                    toastElem.classList.remove('slide-top-in');
-                                    setTimeout(() => toastElem.classList.add('slide-top-out'), 3000);
-                                    toastElem.removeEventListener('animationend', animIn);
-                                }
-                            });
-                            toastElem.addEventListener('animationend', function animOut(e) {
-                                if (e.animationName === 'slideTopOut') {
-                                    toastElem.remove();
-                                    toastElem.removeEventListener('animationend', animOut);
-                                }
-                            });
-                            toastElem.querySelector('.btn-close').onclick = function () {
-                                toastElem.classList.add('slide-top-out');
-                                toastElem.classList.remove('show');
-                                setTimeout(() => toastElem.remove(), 350);
-                            };
-
-                            // ----- Badge: Real Time Quantity Update -----
-                            let badgeId = 'quantity-badge-' + (e.book.book_id ?? e.book.id);
-                            let badge = document.getElementById(badgeId);
-                            if (badge) {
-                                badge.textContent = 'Stock: ' + (e.book.quantity ?? 'N/A');
-                                badge.classList.add('bg-success');
-                                setTimeout(() => badge.classList.remove('bg-success'), 300);
-                            }
-                        });
-                @endif
-                            });
-        </script>
+    // Row highlight on click (optional)
+    $('#myTable tbody').on('click', 'tr', function () {
+        $(this).toggleClass('selected');
+    });
+</script>
 
 </html>
