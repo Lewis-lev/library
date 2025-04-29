@@ -51,11 +51,18 @@
                             alt="Profile" width="34" height="34" class="rounded-circle border" style="object-fit:cover;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="profileDropdown">
-                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="fa fa-user me-2"></i>Profile Detail</a></li>
+                        <li>
+                            <a class="dropdown-item w-100 text-start" href="{{ route('profile.edit') }}">
+                            <i class="fa fa-user me-2"></i>Profile Detail</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item w-100 text-start" href="{{ route('books.history') }}">
+                            <i class="fa fa-book me-2"></i>Books History</a>
+                        </li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button class="dropdown-item" type="submit"><i class="fa fa-sign-out-alt me-2"></i>Logout</button>
+                                <button class="dropdown-item w-100 text-start" type="submit"><i class="fa fa-sign-out-alt me-2"></i>Logout</button>
                             </form>
                         </li>
                     </ul>

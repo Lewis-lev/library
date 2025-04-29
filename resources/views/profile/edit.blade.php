@@ -78,44 +78,58 @@
     </div>
     @endif
 
-    <div class="card mx-auto" style="max-width:1000px;">
-        <div class="card-body text-center">
+    <div class="card mx-auto shadow-sm">
+        <div class="card-body text-center p-4">
 
             <!-- PROFILE IMAGE -->
             <img
                 src="{{ auth()->user()->profile_picture ? asset('storage/profile_pict/' . auth()->user()->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
-                class="rounded-circle mb-3"
-                style="width: 120px; height: 120px; object-fit: cover; border: 2px solid #eee;"
+                class="rounded-circle mb-3 shadow"
+                style="width: 120px; height: 120px; object-fit: cover; background: #f6f9fc;"
                 alt="Profile Picture">
 
-            <!-- PROFILE DATA (show only, not editable) -->
-            <table class="table table-borderless text-start mb-4">
-                <tr>
-                    <th>Name</th>
-                    <td>{{ auth()->user()->name }}</td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td>{{ auth()->user()->email }}</td>
-                </tr>
-                <tr>
-                    <th>Phone Number</th>
-                    <td>{{ auth()->user()->phone_number ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th>Address</th>
-                    <td>{{ auth()->user()->address ?? '-' }}</td>
-                </tr>
-            </table>
+            <!-- "COOLER" PROFILE INFO CARD -->
+            <div class="mx-auto mb-4">
+                <div class="list-group list-group-flush gap-2">
+                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
+
+                        <div class="flex-fill">
+                            <span class="fw-semibold">Name</span>
+                            <div class="text-muted small">{{ auth()->user()->name }}</div>
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
+
+                        <div class="flex-fill">
+                            <span class="fw-semibold">Email</span>
+                            <div class="text-muted small">{{ auth()->user()->email }}</div>
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
+
+                        <div class="flex-fill">
+                            <span class="fw-semibold">Phone</span>
+                            <div class="text-muted small">{{ auth()->user()->phone_number ?? '-' }}</div>
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
+                       
+                        <div class="flex-fill">
+                            <span class="fw-semibold">Address</span>
+                            <div class="text-muted small">{{ auth()->user()->address ?? '-' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- SHOW EDIT BUTTON -->
             <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="toggleEditProfile(true)">Edit Profile</button>
         </div>
     </div>
 
-    <!-- HIDDEN EDIT FORM - toggled by JS below -->
+    <!-- [rest of your edit form stays the same as before] -->
     <div class="card mx-auto mt-4"
-        style="max-width:1000px; @if ($errors->any()) display:block; @else display:none; @endif"
+        style="@if ($errors->any()) display:block; @else display:none; @endif"
         id="editProfileCard">
         <div class="card-body">
             <h5 class="mb-3 text-center">Edit Profile</h5>
@@ -148,7 +162,7 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Full Name</label>
+                    <label for="name" class="form-label">Username</label>
                     <input type="text" class="form-control @error('name') is-invalid @enderror"
                         name="name" id="name" value="{{ old('name', auth()->user()->name) }}" required>
                     @error('name')

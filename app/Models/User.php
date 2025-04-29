@@ -51,4 +51,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function borrows()
+    {
+        return $this->hasMany(\App\Models\Borrow::class, 'user_id', 'user_id');
+    }
 }

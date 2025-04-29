@@ -37,7 +37,7 @@ class BorrowController extends Controller
             'user_id' => $user->user_id,
             'book_id' => $book->book_id,
             'status' => 'pending',
-            'borrow_code' => 'BR-' . strtoupper(Str::random()),
+            'borrow_code' => 'BR-' . strtoupper(Str::random(6)),
             'borrow_date' => now(),
             'return_date' => null,
         ]);
@@ -104,5 +104,10 @@ class BorrowController extends Controller
     {
         Borrow::truncate();
         return back()->with('success', 'All borrow records deleted.');
+    }
+
+    public function history()
+    {
+        return view('books.history');
     }
 }

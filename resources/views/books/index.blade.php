@@ -125,8 +125,9 @@
                                         <form action="{{ route('books.destroy', $book) }}" method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Are you sure?')">Delete</button>
+                                            <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">
+                                                Delete
+                                            </button>
                                         </form>
                                     @endif
                                 @else
