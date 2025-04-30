@@ -14,7 +14,7 @@
     <div class="alert alert-danger">
         <ul>
             @foreach ($errors->all() as $err)
-            <li>{{ $err }}</li>
+            <li>{!! $err !!}</li>
             @endforeach
         </ul>
     </div>
@@ -27,7 +27,6 @@
             <label for="email" class="form-label">Email</label>
             <input id="email" class="form-control" type="email" name="email" value="{{ old('email') }}" required autofocus>
             @error('email')
-            <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
 

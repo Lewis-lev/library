@@ -44,6 +44,11 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
+        if (!$request->user()->hasVerifiedEmail()) {
+            return redirect()->route('profile.edit')
+                ->with('error', 'You must verify your email address before editing your profile.');
+        }
+
         if ($request->hasFile('profile_picture')) {
             // Remove previous image if exists
             if ($user->profile_picture && Storage::disk('public')->exists('profile_pict/' . $user->profile_picture)) {

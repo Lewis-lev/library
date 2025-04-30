@@ -57,12 +57,23 @@
     }
 </style>
 
+
+@php
+    // Fallback for direct view access; REMOVE if your controller always sets this variable!
+    if (!isset($isVerified)) {
+        // Default to user's email_verified_at, or adjust this logic per your requirements
+        $isVerified = auth()->user() && auth()->user()->email_verified_at;
+    }
+
+    $verifyUrl = route('verification.notice');
+@endphp
+
 @extends('layouts.borrower')
 @section('title', 'Profile Detail')
 
 @section('content')
 <div class="container mt-5">
-    <h2 class="mb-4">My Profile</h2>
+    <h2 class="mb-4 fw-bold"><i class="fa-solid fa-user"></i> My Profile</h2>
 
     <!-- Show session alerts, if any -->
     @if(session('status'))
@@ -113,7 +124,7 @@
                         </div>
                     </div>
                     <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
-                       
+
                         <div class="flex-fill">
                             <span class="fw-semibold">Address</span>
                             <div class="text-muted small">{{ auth()->user()->address ?? '-' }}</div>
@@ -123,7 +134,11 @@
             </div>
 
             <!-- SHOW EDIT BUTTON -->
-            <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="toggleEditProfile(true)">Edit Profile</button>
+            @if($isVerified)
+                <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="toggleEditProfile(true)">Edit Profile</button>
+            @else
+                <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="showVerifyError()" type="button">Edit Profile</button>
+            @endif
         </div>
     </div>
 
@@ -275,6 +290,27 @@
             document.getElementById('password_confirmation').value = '';
         }
     }
+
+    function showVerifyError() {
+    window.verifyUrl = @json($verifyUrl);
+    // Bootstrap 5: create a temp alert if user not verified
+    let alertHtml = `<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        You must verify your email address before you can edit your profile.
+        Verify <a href="${window.verifyUrl}">here</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`;
+    // Insert after button or at the top
+    let btn = document.getElementById('editProfileBtn');
+    btn.insertAdjacentHTML('afterend', alertHtml);
+    // auto-close
+    setTimeout(function() {
+        let alert = btn.parentNode.querySelector('.alert');
+        if(alert) {
+            alert.classList.remove('show');
+            setTimeout(()=>alert.remove(), 300);
+        }
+    }, 3000);
+}
 
     document.addEventListener('DOMContentLoaded', function() {
         // Edit Profile Form

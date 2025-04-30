@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\BookBorrowed;
 use App\Models\Book;
 use App\Models\Borrow;
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,19 @@ class BorrowController extends Controller
     {
         $user = Auth::user();
 
-        // Prevent duplicate pending borrow
+        // Block unverified users
+        if (method_exists($user, 'hasVerifiedEmail') && !$user->hasVerifiedEmail()) {
+            $verifyUrl = route('verification.notice');
+            return redirect()->back()->with('error',
+                'You must verify your email address before borrowing books. ' .
+                'Verify your email <a href="' . $verifyUrl . '">here</a>.'
+            );
+        }
+
+        if (empty($user->phone_number) || empty($user->address)) {
+            return redirect()->back()->with('error', 'You must complete your profile (phone number and address) before borrowing books. <a href="'.route('profile.edit').'">Update your profile</a>.');
+        }
+
         $hasPending = Borrow::where('user_id', $user->user_id)
             ->where('status', 'pending')
             ->exists();
@@ -37,7 +50,7 @@ class BorrowController extends Controller
             'user_id' => $user->user_id,
             'book_id' => $book->book_id,
             'status' => 'pending',
-            'borrow_code' => 'BR-' . strtoupper(Str::random(6)),
+            'borrow_code' => 'BR-' . strtoupper(Str::random(8)),
             'borrow_date' => now(),
             'return_date' => null,
         ]);

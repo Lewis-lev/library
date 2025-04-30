@@ -10,11 +10,11 @@
         @endif
         @if(session('error'))
             <div id="success-alert" class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                <strong>{{ session('error') }}</strong>
+                <strong>{!! session('error') !!}</strong>
             </div>
         @endif
 
-        <h2 class="mb-4">Books</h2>
+        <h2 class="mb-4 mt-2 text-center fw-bold"><i class="fa-solid fa-book"></i> Books</h2>
 
         <!-- Search & Sort -->
         <div class="d-flex justify-content-between mb-3">

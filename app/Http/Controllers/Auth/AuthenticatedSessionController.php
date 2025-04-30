@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -22,15 +24,35 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        $request->authenticate();
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && ! $user->hasVerifiedEmail()) {
+            // Provide a link to verify-email page in the error
+            $verifyUrl = route('verification.notice');
+            $errorMessage = 'You must verify your email address before logging in. '
+                . 'Click <a href="' . $verifyUrl . '">here</a> to resend the verification email.';
+            return back()->withErrors([
+                'email' => $errorMessage,
+            ])->withInput($request->only('email'));
+        }
+
+        if (! Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect('/');	
     }
-
     /**
      * Destroy an authenticated session.
      */

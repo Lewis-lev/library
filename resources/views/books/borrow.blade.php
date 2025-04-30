@@ -27,7 +27,7 @@
                             <th class="text-center">Books Title</th>
                             <th class="text-center">Username</th>
                             <th class="text-center">Email</th>
-                            <th class="text-center">Phone Number</th>
+                            <th class="text-center">Phone</th>
                             <th class="text-center">Status</th>
                             <th class="text-center">
                                 @if(request()->has('status'))
