@@ -12,6 +12,8 @@ class Borrow extends Model
         'user_id',
         'book_id',
         'borrow_code',
+        'borrow_duration',
+        'return_date',
         'status',
     ];
 

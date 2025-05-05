@@ -44,6 +44,43 @@ class BookController extends Controller
         return view('books.index', compact('books'));
     }
 
+    public function dashboard()
+    {
+        $user = Auth::user();
+
+        // Use the correct user id column (user_id), adjust if your PK/column differs!
+        $userKey = property_exists($user, 'user_id') ? $user->user_id : $user->user_id;
+
+        // 1. Current borrowed (status = approved, not yet returned)
+        $currentBorrowCount = Borrow::where('user_id', $userKey)
+            ->where('status', 'approved')
+            ->count();
+
+        // 2. Completed returns (status = returned, has returned_at)
+        $borrowHistoryCount = Borrow::where('user_id', $userKey)
+            ->where('status', 'returned')
+            ->count();
+
+        // 3. Overdue books (still borrowed and due date in the past)
+        $overdueCount = Borrow::where('user_id', $userKey)
+            ->where('status', 'approved')
+            ->where('return_date', '<', now())
+            ->count();
+
+        // 4. Recent borrowed books (the latest 5 borrow records for this user, with books joined)
+        $recentBorrows = Borrow::with('book')
+            ->where('user_id', $userKey)
+            ->orderByDesc('borrow_date') // Use your actual borrow date field
+            ->limit(5)
+            ->get();
+
+        return view('dashboard', [
+            'currentBorrowCount' => $currentBorrowCount,
+            'borrowHistoryCount' => $borrowHistoryCount,
+            'overdueCount' => $overdueCount,
+            'recentBorrows' => $recentBorrows,
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */

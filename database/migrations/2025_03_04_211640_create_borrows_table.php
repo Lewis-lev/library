@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('borrow_date');
             $table->date('return_date')->nullable();
             $table->timestamps();
+            $table->integer('borrow_duration')->default(7);
         });
     }
 

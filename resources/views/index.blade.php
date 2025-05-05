@@ -8,6 +8,13 @@
     body {
         background: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%) !important;
     }
+
+    .centered-hero-container {
+        min-height: 80vh; /* Leave slight space for nav/footer */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .cool-hero {
         background: rgba(255,255,255,0.90);
         border-radius: 16px;
@@ -104,11 +111,11 @@
     }
 </style>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<div class="container centered-hero-container">
+    <div class="row justify-content-center w-100">
+        <div class="col-lg-8" >
 
-            <div class="cool-hero text-center">
+            <div class="align-middle cool-hero text-center">
                 <h1>
                     Welcome to <span style="color: #2563eb;">LibraryApp</span>
                 </h1>

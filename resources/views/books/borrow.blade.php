@@ -23,104 +23,75 @@
                 <table id="myTable" class="table table-striped table-bordered table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th class="text-center">Borrow Code</th>
-                            <th class="text-center">Books Title</th>
-                            <th class="text-center">Username</th>
-                            <th class="text-center">Email</th>
-                            <th class="text-center">Phone</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">
-                                @if(request()->has('status'))
-                                    {{ ucfirst(request('status')) }} Date
-                                @else
-                                    Date
-                                @endif
-                            </th>
+                            <th>Borrow Code</th>
+                            <th>Book Title</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Requested</th>
+                            <th style="min-width: 110px;">Borrow Date</th>
+                            <th style="min-width: 110px;">Return Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($borrows as $borrow)
-                            <tr>
-                                <td class="align-middle">{{ $borrow->borrow_code }}</td>
-                                <td class="align-middle">{{ $borrow->book->title ?? 'N/A' }}</td>
-                                <td class="align-middle">{{ $borrow->user->name ?? 'N/A' }}</td>
-                                <td class="align-middle">{{ $borrow->user->email ?? 'N/A' }}</td>
-                                <td class="align-middle">{{ $borrow->user->phone_number ?? 'N/A' }}</td>
-                                <td class="align-middle">
-                                    <div class="d-flex justify-content-center align-items-center gap-2">
-                                        @if(auth()->check() && auth()->user()->role === 'admin')
-                                            @if($borrow->status === 'pending')
-                                                <form action="{{ route('borrows.approve', $borrow->borrow_id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-success btn-sm mt-3">
-                                                        <i class="fas fa-check"></i> Approve
-                                                    </button>
-                                                </form>
-                                                <form action="{{ route('borrows.reject', $borrow->borrow_id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-danger btn-sm mt-3">
-                                                        <i class="fas fa-times"></i> Reject
-                                                    </button>
-                                                </form>
-                                            @elseif($borrow->status === 'approved')
-                                                <form action="{{ route('borrows.return', $borrow->borrow_id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-primary btn-sm mt-3">
-                                                        <i class="fas fa-undo"></i> Return
-                                                    </button>
-                                                </form>
-                                            @elseif($borrow->status === 'rejected')
-                                                <span class="badge bg-danger d-flex align-items-center px-3 py-2">Rejected</span>
-                                                <form action="{{ route('borrows.destroy', $borrow->borrow_id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this borrow record?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm mt-3">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
-                                                </form>
-                                            @elseif($borrow->status === 'returned')
-                                                <span class="badge bg-info d-flex align-items-center px-3 py-2 text-dark">Returned</span>
-                                                <form action="{{ route('borrows.destroy', $borrow->borrow_id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this borrow record?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm mt-3">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        @else
-                                            <span class=" bg-{{
-                                                $borrow->status === 'pending' ? 'warning' :
-                                                ($borrow->status === 'approved' ? 'success' :
-                                                ($borrow->status === 'rejected' ? 'danger' :
-                                                ($borrow->status === 'returned' ? 'info text-dark' : 'secondary'))) }}">
-                                                {{ ucfirst($borrow->status) }}
-                                            </span>
+                        <tr>
+                                    <td>{{ $borrow->borrow_code }}</td>
+                                    <td>{{ $borrow->book ? $borrow->book->title : 'N/A' }}</td>
+                                    <td>{{ $borrow->user ? $borrow->user->name : 'N/A' }}</td>
+                                    <td>{{ $borrow->user ? $borrow->user->email : 'N/A' }}</td>
+                                    <td>{{ $borrow->user ? $borrow->user->phone_number : 'N/A' }}</td>
+                                    <td>
+                                        @if($borrow->status === 'pending')
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        @elseif($borrow->status === 'approved')
+                                            <span class="badge bg-success">Approved</span>
+                                        @elseif($borrow->status === 'returned')
+                                            <span class="badge bg-info text-dark">Returned</span>
+                                        @elseif($borrow->status === 'rejected')
+                                            <span class="badge bg-danger">Rejected</span>
                                         @endif
-                                    </div>
-                                </td>
-                                <td class="align-middle">
+                                    </td>
+                                    <td class="text-center">{{ $borrow->created_at ? $borrow->created_at->format('d M Y H:i') : '-' }}</td>
+                                    <td class="text-center">{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('d M Y H:i') : '-' }}</td>
+                                    <td class="text-center"><b>{{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('d M Y') : '-' }}</td>
+                                    <td>
                                     @if($borrow->status === 'pending')
-                                        {{ $borrow->created_at ? $borrow->created_at->format('Y-m-d H:i') : '-' }}
+                                        <form action="{{ route('borrows.approve', $borrow->borrow_id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-success btn-sm" title="Approve"><i class="fas fa-check"></i></button>
+                                        </form>
+                                        <form action="{{ route('borrows.reject', $borrow->borrow_id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Reject"><i class="fas fa-times"></i></button>
+                                        </form>
                                     @elseif($borrow->status === 'approved')
-                                        {{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('Y-m-d H:i') : '-' }}
-                                    @elseif($borrow->status === 'returned')
-                                        {{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('Y-m-d H:i') : '-' }}
-                                    @elseif($borrow->status === 'rejected')
-                                        {{ $borrow->updated_at ? $borrow->updated_at->format('Y-m-d H:i') : '-' }}
-                                    @else
-                                        -
+                                        <form action="{{ route('borrows.return', $borrow->borrow_id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-primary btn-sm" title="Mark as Returned"><i class="fas fa-undo"></i></button>
+                                        </form>
                                     @endif
-                                </td>
-                            </tr>
+                                    @if(in_array($borrow->status, ['rejected','returned']))
+                                        <form action="{{ route('borrows.destroy', $borrow->borrow_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this borrow record?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete"><i class="fas fa-trash"></i></button>
+                                        </form>
+                                    @endif
+                                    </td>
+                                </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
+<br><br><br>
+<br><br><br>
+<br>
 @endsection

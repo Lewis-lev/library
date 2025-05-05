@@ -31,18 +31,6 @@ class AuthenticatedSessionController extends Controller
             'password' => ['required'],
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if ($user && ! $user->hasVerifiedEmail()) {
-            // Provide a link to verify-email page in the error
-            $verifyUrl = route('verification.notice');
-            $errorMessage = 'You must verify your email address before logging in. '
-                . 'Click <a href="' . $verifyUrl . '">here</a> to resend the verification email.';
-            return back()->withErrors([
-                'email' => $errorMessage,
-            ])->withInput($request->only('email'));
-        }
-
         if (! Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
@@ -51,7 +39,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect('/');	
+        return redirect('/');
     }
     /**
      * Destroy an authenticated session.

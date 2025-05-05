@@ -53,9 +53,9 @@
                                 <th>Borrow Code</th>
                                 <th>Book Title</th>
                                 <th>Status</th>
+                                <th class="text-center">Requested</th>
                                 <th class="text-center">Borrow Date</th>
                                 <th class="text-center">Return Date</th>
-                                <th class="text-center">Requested</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -74,9 +74,9 @@
                                             <span class="badge bg-danger">Rejected</span>
                                         @endif
                                     </td>
-                                    <td class="text-center">{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('Y-m-d H:i') : '-' }}</td>
-                                    <td class="text-center">{{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('Y-m-d H:i') : '-' }}</td>
-                                    <td class="text-center">{{ $borrow->created_at ? $borrow->created_at->format('Y-m-d H:i') : '-' }}</td>
+                                    <td class="text-center">{{ $borrow->created_at ? $borrow->created_at->format('d M Y H:i') : '-' }}</td>
+                                    <td class="text-center">{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('d M Y H:i') : '-' }}</td>
+                                    <td class="text-center"><b>{{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('d M Y') : '-' }}</b></td>
                                 </tr>
                             @empty
                                 <tr>
@@ -92,7 +92,10 @@
         </div>
     </div>
 </div>
-
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<br><br><br>
 @push('scripts')
 <script>
     // Remember tab via localStorage (optional)

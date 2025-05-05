@@ -102,14 +102,20 @@
                                                         @csrf
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="borrowConfirmLabel{{ $book->book_id }}">Borrow
-                                                                Book</h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Are you sure you want to borrow "<b>{{ $book->title }}</b>"?
-                                                        </div>
-                                                        <div class="modal-footer">
+                                                                    Book</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Are you sure you want to borrow "<b>{{ $book->title }}</b>"?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                            <label for="borrow_duration">How long do you want to borrow?</label>
+                                                            <select name="borrow_duration" id="borrow_duration" class="form-select" required>
+                                                                <option value="3">3 days</option>
+                                                                <option value="7" selected>7 days</option>
+                                                                <option value="14">14 days</option>
+                                                                <option value="30">30 days</option>
+                                                            </select>
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Cancel</button>
                                                             <button type="submit" class="btn btn-success">Yes, Borrow</button>

@@ -17,7 +17,7 @@ class BorrowController extends Controller
         $borrows = Borrow::with(['user', 'book'])->get();
         return view('books.borrow', compact('borrows'));
     }
-    public function borrow(Book $book)
+    public function borrow(Book $book, Request $request)
     {
         $user = Auth::user();
 
@@ -46,13 +46,15 @@ class BorrowController extends Controller
             return redirect()->back()->with('error', 'Sorry, this book is currently not available.');
         }
 
+        $duration = (int) $request->input('borrow_duration', 7);
         Borrow::create([
             'user_id' => $user->user_id,
             'book_id' => $book->book_id,
             'status' => 'pending',
             'borrow_code' => 'BR-' . strtoupper(Str::random(8)),
             'borrow_date' => now(),
-            'return_date' => null,
+            'borrow_duration' => $duration,
+            'return_date' => now()->addDays($duration),
         ]);
 
         event(new BookBorrowed($user, $book));

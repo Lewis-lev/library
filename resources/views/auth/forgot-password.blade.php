@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-4">
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body">
@@ -47,4 +47,9 @@
         </div>
     </div>
 </div>
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<br>
 @endsection

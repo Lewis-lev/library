@@ -12,10 +12,6 @@ Route::get('/', function () {
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('books', BookController::class)->except(['index']);
     Route::get('/borrow', [BorrowController::class, 'index'])->name('borrow.index');
@@ -32,6 +28,7 @@ Route::middleware(['auth', 'role:borrower', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/books/{book}/borrow', [BorrowController::class, 'borrow'])->name('books.borrow');
     Route::get('/profile/history', [BorrowController::class, 'history'])->name('books.history');
+    Route::get('/dashboard', [BookController::class, 'dashboard'])->name('dashboard');
 });
 
 Route::get('/test/upload', [ImageUploadTestController::class, 'showForm'])->name('test.upload');
