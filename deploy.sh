@@ -11,4 +11,8 @@ php artisan route:cache
 echo "Running migrations..."
 php artisan migrate --force
 
+php artisan config:clear
+php artisan config:cache
 
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
