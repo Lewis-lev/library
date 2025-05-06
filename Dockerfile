@@ -34,5 +34,5 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 # Expose PHP-FPM port
 EXPOSE 9000
 
-# Start PHP-FPM
-CMD ["php-fpm"]
+CMD ["sh", "/var/www/deploy.sh"]  # Run your deploy script
+
