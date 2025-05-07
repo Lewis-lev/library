@@ -1,26 +1,27 @@
-FROM richarvey/nginx-php-fpm:1.7.2
 
-COPY . /var/www/html
+FROM webdevops/php-nginx:8.2-alpine
 
-COPY ./nginx.conf /etc/nginx/sites-available/default.conf
+# Set working directory
+WORKDIR /var/www/html
 
-COPY deploy.sh /deploy.sh
-RUN chmod +x /deploy.sh
+# Copy application files
+COPY . .
 
-# Image config
-ENV WEBROOT /public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
+# Copy nginx config if you have a custom one
+# COPY ./nginx.conf /etc/nginx/nginx.conf
 
-# Laravel config
-ENV APP_ENV production
-ENV APP_DEBUG false
-ENV LOG_CHANNEL stderr
+# Install composer dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-# Allow composer to run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Set permissions (make sure storage and bootstrap/cache are writable)
+RUN chown -R application:application storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-RUN composer install --no-dev --optimize-autoloader --working-dir=/var/www/html
+# Environment variables as needed
+ENV APP_ENV=production
+ENV APP_DEBUG=false
 
-CMD ["/start.sh"]
+# Expose web port
+EXPOSE 80
+
+# Entrypoint and command are set by the base image
