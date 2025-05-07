@@ -2,7 +2,7 @@ FROM richarvey/nginx-php-fpm:1.7.2
 
 COPY . /var/www/html
 
-COPY ./nginx.conf /etc/nginx/sites-available/default.conf
+COPY ./default.conf /etc/nginx/sites-available/default.conf
 
 # Image config
 ENV SKIP_COMPOSER 1
