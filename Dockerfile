@@ -5,7 +5,6 @@ COPY . /var/www/html
 COPY ./nginx.conf /etc/nginx/sites-available/default.conf
 
 # Image config
-ENV SKIP_COMPOSER 1
 ENV WEBROOT /public
 ENV PHP_ERRORS_STDERR 1
 ENV RUN_SCRIPTS 1
