@@ -4,6 +4,9 @@ COPY . /var/www/html
 
 COPY ./nginx.conf /etc/nginx/sites-available/default.conf
 
+COPY deploy.sh /deploy.sh
+RUN chmod +x /deploy.sh
+
 # Image config
 ENV WEBROOT /public
 ENV PHP_ERRORS_STDERR 1
