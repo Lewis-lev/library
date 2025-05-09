@@ -54,12 +54,13 @@
         <h3 class="mt-4">Books</h3>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
             @foreach ($books as $book)
+            {{-- For debugging: --}}
                 <div class="col d-flex">
                     <div class="card text-center flex-fill">
                         @if ($book->image)
-                            <img src="{{ asset('storage/' . $book->image) }}" class="card-img-top book-zoom-img"
+                            <img src="{{ asset( path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}" class="card-img-top book-zoom-img"
                                 style="height: 210px; object-fit: cover; cursor: pointer;" alt="Book Cover" data-bs-toggle="modal"
-                                data-bs-target="#imageZoomModal" data-img="{{ asset('storage/' . $book->image) }}">
+                                data-bs-target="#imageZoomModal" data-img="{{ asset('https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}">
                         @else
                             <img src="{{ asset('default-book.jpg') }}" class="card-img-top book-zoom-img"
                                 style="height: 210px; object-fit: cover; cursor: pointer;" alt="Default Book Cover"

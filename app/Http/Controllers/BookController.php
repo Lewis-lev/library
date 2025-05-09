@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Models\User;
 use App\Models\Genre;
 use App\Models\Borrow;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
-use App\Notifications\BookBorrowedNotification;
 use App\Events\BookBorrowed;
+use App\Notifications\BookBorrowedNotification;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Notification;
 
 class BookController extends Controller
@@ -100,30 +100,33 @@ class BookController extends Controller
             'author' => 'required',
             'publisher' => 'required',
             'quantity' => 'required|integer',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'genres' => 'sometimes|array',
-            'genres.*' => 'exists:genres,genre_id'
+            'genres.*' => 'exists:genres,genre_id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-
-        $imagePath = null;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $filename = uniqid('book_') . '.webp';
             $relativePath = 'img/book_images/' . $filename;
-            $fullPath = Storage::disk('public')->path($relativePath);
 
             try {
                 $imgContent = file_get_contents($image->getRealPath());
                 $gdImage = @imagecreatefromstring($imgContent);
 
                 if ($gdImage) {
-                    if (!file_exists(dirname($fullPath))) {
-                        mkdir(dirname($fullPath), 0755, true);
-                    }
-                    imagewebp($gdImage, $fullPath);
+                    // Convert to .webp in-memory
+                    ob_start();
+                    imagewebp($gdImage, null, 80); // 80 quality (adjust if needed)
+                    $webpData = ob_get_clean();
                     imagedestroy($gdImage);
-                    $imagePath = $relativePath;
+
+                    if (!$webpData) {
+                        return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
+                    }
+
+                    // Store to R2 using Storage facade
+                    Storage::disk('r2')->put($relativePath, $webpData, 'public');
                 } else {
                     return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
                 }
@@ -138,7 +141,7 @@ class BookController extends Controller
             'publisher' => $request->publisher,
             'quantity' => $request->quantity,
             'code' => 'BK-' . strtoupper(Str::random(6)),
-            'image' => $imagePath,
+            'image' => $filename,
         ]);
 
         $genreIds = array_unique(array_filter($request->input('genres', [])));
@@ -181,34 +184,39 @@ class BookController extends Controller
 
         $data = $request->only(['title', 'author', 'publisher', 'quantity']);
 
-        $book->update($data);
+        // Update genres if provided
         if ($request->has('genres')) {
-            $book->genres()->sync($request->input('genres'));
+            $book->genres()->sync($request->input('genres', []));
         }
 
-        // If a new image is uploaded, handle conversion, replace and delete old image
+        // If a new image is uploaded, convert and upload to R2, delete the old image from R2
         if ($request->hasFile('image')) {
-            // Remove previous image if exists
-            if ($book->image && Storage::disk('public')->exists($book->image)) {
-                Storage::disk('public')->delete($book->image);
+            // Remove previous image if it exists on R2
+            if ($book->image && Storage::disk('r2')->exists('img/book_images/' . $book->image)) {
+                Storage::disk('r2')->delete('img/book_images/' . $book->image);
             }
 
             $image = $request->file('image');
             $filename = uniqid('book_') . '.webp';
             $relativePath = 'img/book_images/' . $filename;
-            $fullPath = Storage::disk('public')->path($relativePath);
 
             try {
                 $imgContent = file_get_contents($image->getRealPath());
                 $gdImage = @imagecreatefromstring($imgContent);
 
                 if ($gdImage) {
-                    if (!file_exists(dirname($fullPath))) {
-                        mkdir(dirname($fullPath), 0755, true);
-                    }
-                    imagewebp($gdImage, $fullPath);
+                    ob_start();
+                    imagewebp($gdImage, null, 80); // 80 quality (adjust if needed)
+                    $webpData = ob_get_clean();
                     imagedestroy($gdImage);
-                    $data['image'] = $relativePath;
+
+                    if (!$webpData) {
+                        return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
+                    }
+
+                    // Store to R2
+                    Storage::disk('r2')->put($relativePath, $webpData, 'public');
+                    $data['image'] = $filename;
                 } else {
                     return redirect()->back()->withErrors(['image' => 'Failed to process image. Please upload a valid image file.']);
                 }
@@ -226,13 +234,14 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        // Delete associated image file if exists
-        if ($book->image && Storage::disk('public')->exists($book->image)) {
-            Storage::disk('public')->delete($book->image);
+        // Delete associated image file from R2 if exists
+        if ($book->image && Storage::disk('r2')->exists('img/book_images/' . $book->image)) {
+            Storage::disk('r2')->delete('img/book_images/' . $book->image);
         }
 
         $book->delete();
 
         return redirect()->route('books.index')->with('success', 'Book deleted successfully.');
     }
+
 }

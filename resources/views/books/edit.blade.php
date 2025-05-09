@@ -90,7 +90,7 @@
             <label for="image" class="form-label">Book Cover</label>
             @if($book->image)
             <div class="mb-2">
-                <img src="{{ asset('storage/' . $book->image) }}" alt="Current Cover" style="max-height:120px;">
+                <img src="{{ asset('https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}" alt="Current Cover" style="max-height:120px;">
             </div>
             @endif
             <input type="file" class="form-control @error('image') is-invalid @enderror"
