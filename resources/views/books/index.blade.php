@@ -51,7 +51,7 @@
         @endguest
 
         <!-- Books Grid Section -->
-        <h3 class="mt-4">Books</h3>
+        <h3 class="mt-4">Booksssssss</h3>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
             @foreach ($books as $book)
             {{-- For debugging: --}}
