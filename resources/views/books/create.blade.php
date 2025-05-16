@@ -66,6 +66,15 @@
         </div>
 
         <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" name="description" class="form-control @error('description') is-invalid @enderror"
+                id="description" value="{{ old('description') }}" required>
+            @error('description')
+            <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
             <label for="publisher" class="form-label">Publisher</label>
             <input type="text" name="publisher" class="form-control @error('publisher') is-invalid @enderror"
                 id="publisher" value="{{ old('publisher') }}" required>

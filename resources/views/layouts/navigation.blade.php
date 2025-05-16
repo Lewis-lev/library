@@ -71,6 +71,11 @@
                         <i class="fa fa-list-alt me-1"></i>Borrow Log
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link cool-nav-link fw-semibold" href="{{ route('auth.user-list') }}">
+                        <i class="fa fa-user-alt me-1"></i>User  List
+                    </a>
+                </li>
                 @endif
                 @endauth
             </ul>

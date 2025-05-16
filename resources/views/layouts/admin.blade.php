@@ -1,44 +1,60 @@
-<style>
-    /* Slide down from top when appearing */
-    .toast.slide-top-in {
-        animation: slideTopIn .5s cubic-bezier(0.42, 0, 0.58, 1);
-    }
-
-    @keyframes slideTopIn {
-        from {
-            opacity: 0;
-            transform: translateY(-40px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Slide up when disappearing */
-    .toast.slide-top-out {
-        animation: slideTopOut .5s cubic-bezier(0.42, 0, 0.58, 1) forwards;
-    }
-
-    @keyframes slideTopOut {
-        from {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-
-        to {
-            opacity: 0;
-            transform: translateY(-40px);
-        }
-    }
-</style>
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+        }
+
+        /* Slide down from top when appearing */
+        .toast.slide-top-in {
+            animation: slideTopIn .5s cubic-bezier(0.42, 0, 0.58, 1);
+        }
+
+        @keyframes slideTopIn {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Slide up when disappearing */
+        .toast.slide-top-out {
+            animation: slideTopOut .5s cubic-bezier(0.42, 0, 0.58, 1) forwards;
+        }
+
+        @keyframes slideTopOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+
+            to {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+        }
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'My Library')</title>
@@ -63,9 +79,11 @@
         <!-- Toasts will be appended dynamically -->
     </div>
 
-    <main class="py-10">
-        @yield('content')
-    </main>
+    <div class="main-content">
+        <main class="py-10">
+            @yield('content')
+        </main>
+    </div>
 
     @include('layouts.footer')
 
@@ -101,7 +119,7 @@
 
                     // Message
                     let message = `<strong class="me-auto"><i class="fa-solid fa-book-open"></i> Request sent!</strong>
-                                                        <div><b>${e.user.name}</b> just sent a request to borrow "<b>${e.book.title}</b>"</div>`;
+                                                                <div><b>${e.user.name}</b> just sent a request to borrow "<b>${e.book.title}</b>"</div>`;
 
                     // Build the toast element
                     let toastElem = document.createElement('div');
@@ -112,12 +130,12 @@
                     toastElem.setAttribute('aria-atomic', 'true');
                     toastElem.style.minWidth = '270px';
                     toastElem.innerHTML = `
-                                            <div class="d-flex">
-                                            <div class="toast-body">
-                                                ${message}
-                                            </div>
-                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                                            </div>`;
+                                                    <div class="d-flex">
+                                                    <div class="toast-body">
+                                                        ${message}
+                                                    </div>
+                                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                                    </div>`;
                     container.appendChild(toastElem);
 
                     // Animation and remove handling

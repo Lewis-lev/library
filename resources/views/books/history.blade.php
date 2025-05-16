@@ -92,10 +92,6 @@
         </div>
     </div>
 </div>
-<br><br><br>
-<br><br><br>
-<br><br><br>
-<br><br><br>
 @push('scripts')
 <script>
     // Remember tab via localStorage (optional)

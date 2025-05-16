@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -120,5 +121,36 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function userList()
+    {
+        $user = User::All();
+
+        return view('auth.user-list', compact('user'));
+    }
+
+    public function delete(User $user_id)
+    {
+        // Prevent deletion of admin users
+        if ($user_id->role === 'admin') {
+            return redirect()->route('auth.user-list')->with('error', 'Admin users cannot be deleted.');
+        }
+
+        // Delete associated image file from R2 if exists
+        if ($user_id->image && Storage::disk('r2')->exists('img/book_images/' . $user_id->image)) {
+            Storage::disk('r2')->delete('img/book_images/' . $user_id->image);
+        }
+
+        $user_id->delete();
+
+        return redirect()->route('auth.user-list')->with('success', 'User deleted successfully.');
+    }
+
+
+    public function userView($userId)
+    {
+        $user = User::where('user_id', $userId)->firstOrFail();
+        return view('profile.view', compact('user'));
     }
 }

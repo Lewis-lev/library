@@ -53,8 +53,4 @@
         <a href="{{ route('register') }}">Register</a>
     </form>
 </div>
-<br><br><br>
-<br><br><br>
-<br><br><br>
-<br><br>
 @endsection

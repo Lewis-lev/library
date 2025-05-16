@@ -2,6 +2,24 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1 0 auto;
+        }
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Borrower Dashboard</title>
@@ -18,9 +36,11 @@
 <body class="bg-gray-100">
     @include('layouts.navigation')
 
-    <main class="max-w-7xl mx-auto py-6">
-        @yield('content')
-    </main>
+    <div class="main-content">
+        <main class="py-10">
+            @yield('content')
+        </main>
+    </div>
 
     @include('layouts.footer')
 

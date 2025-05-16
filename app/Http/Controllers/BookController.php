@@ -98,6 +98,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'description' => 'required',
             'publisher' => 'required',
             'quantity' => 'required|integer',
             'genres' => 'sometimes|array',
@@ -138,6 +139,7 @@ class BookController extends Controller
         $book = Book::create([
             'title' => $request->title,
             'author' => $request->author,
+            'description' => $request->description,
             'publisher' => $request->publisher,
             'quantity' => $request->quantity,
             'code' => 'BK-' . strtoupper(Str::random(6)),
@@ -157,7 +159,8 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $book = Book::with('genres')->findOrFail($id); // eager-load as in index
+        return view('books.show', compact('book'));
     }
 
     /**
@@ -177,12 +180,13 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required',
             'author' => 'required',
+            'description' => 'required',
             'publisher' => 'required',
             'quantity' => 'required|integer',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $data = $request->only(['title', 'author', 'publisher', 'quantity']);
+        $data = $request->only(['title', 'author', 'description', 'publisher', 'quantity']);
 
         // Update genres if provided
         if ($request->has('genres')) {
