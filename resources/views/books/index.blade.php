@@ -53,14 +53,16 @@
             @foreach ($books as $book)
                 <div class="col d-flex">
                     <div class="card text-center flex-fill">
-                        <p></p>
-                        <a href="{{ route('books.show', $book->book_id) }}" style="color: inherit; text-decoration: none;">
                             @if ($book->image)
-                            <img src="{{ asset( path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}" class="card-img-top book-zoom-img" style="height: 210px; object-fit: cover; cursor: pointer;" alt="Book Cover">
-                        @else
-                            <img src="{{ asset('default-book.jpg') }}" class="card-img-top book-zoom-img"
+                            <a href="{{ route('books.show', $book->book_id) }}" style="color: inherit; text-decoration: none;">
+                                <img src="{{ asset( path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}" class="card-img-top book-zoom-img" style="height: 210px; object-fit: cover; cursor: pointer;" alt="Book Cover">
+                            </a>
+                             @else
+                             <a href="{{ route('books.show', $book->book_id) }}" style="color: inherit; text-decoration: none;">
+                                <img src="{{ asset('default-book.jpg') }}" class="card-img-top book-zoom-img"
                                 style="height: 210px; object-fit: cover; cursor: pointer;" alt="Default Book Cover"
                                 data-bs-toggle="modal" data-bs-target="#imageZoomModal" data-img="{{ asset('default-book.jpg') }}">
+                             </a>
                         @endif
                         <div class="card-body d-flex flex-column">
                             @auth
@@ -79,14 +81,9 @@
                                     </span>
                                 @endif
                             @endauth
-                            <p class="mb-1">
-                                <small>
-                                    Genres:
-                                    {{ $book->genres->implode('name', ', ') }}
-                                </small>
-                            </p>
-                            <p class="text-muted mb-2">Available</p>
+
                             <div class="mt-auto">
+                                <p class="text-muted mb-2">Available</p>
                                 @auth
                                     @if(auth()->user()->role === 'borrower')
                                         <button class="btn btn-success btn-sm" data-bs-toggle="modal"
@@ -138,28 +135,10 @@
                                 @endauth
                             </div>
                         </div>
-                        </a>
                     </div>
                 </div>
             @endforeach
         </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                setTimeout(function () {
-                    var alertElement = document.getElementById('success-alert');
-                    if (alertElement) {
-                        // Try Bootstrap 5 programmatically
-                        if (window.bootstrap && window.bootstrap.Alert && typeof window.bootstrap.Alert.getOrCreateInstance === 'function') {
-                            var bsAlert = bootstrap.Alert.getOrCreateInstance(alertElement);
-                            bsAlert.close();
-                        } else {
-                            // fallback: just hide
-                            alertElement.classList.remove('show');
-                            alertElement.style.display = 'none';
-                        }
-                    }
-                }, 5000);
-            });
-        </script>
+        <script src="{{ asset('js/alert.js') }}"></script>
 @endsection

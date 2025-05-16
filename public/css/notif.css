@@ -1,0 +1,33 @@
+.toast.slide-top-in {
+    animation: slideTopIn .5s cubic-bezier(0.42, 0, 0.58, 1);
+}
+
+@keyframes slideTopIn {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide up when disappearing */
+.toast.slide-top-out {
+    animation: slideTopOut .5s cubic-bezier(0.42, 0, 0.58, 1) forwards;
+}
+
+@keyframes slideTopOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+    to {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}

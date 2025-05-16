@@ -1,21 +1,4 @@
-<style>
-    footer {
-        background: linear-gradient(90deg, #6157ff 0, #33cfff 100%);
-        color: #fff;
-        padding: 38px 0 18px;
-        margin-top: 4rem;
-        box-shadow: 0 -3px 15px #33cfff40;
-    }
-    .footer {
-        max-width: 1100px;
-        margin: 0 auto;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        padding: 0 22px;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('css/footer.css') }}">
 <footer>
     <div class="footer">
         <div>

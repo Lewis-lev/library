@@ -1,41 +1,4 @@
-<style>
-.cool-nav-link {
-    position: relative;
-    transition: all .18s;
-}
-.cool-nav-link:hover, .cool-nav-link:focus {
-    background: rgba(255,255,255,0.12);
-    color: #222;
-    text-shadow: 0 2px 10px #0ff2;
-    box-shadow: 0 2px 9px #72e3ff45;
-    border-radius: 8px !important;
-}
-.logout{
-    transition: .18!important;
-}
-.logout:hover {
-    color: red!important;
-    background: white!important;
-    font-weight: 500!important;
-    border-radius: 50px!important;
-}
-.navbar-brand span.brand-gradient-text {
-    background:linear-gradient(93deg,#fffc 60%,#5ed4fa 100%);
-    -webkit-background-clip:text;
-    color:transparent;
-    text-shadow: 0 3px 16px #46bdef28;
-}
-.navbar .dropdown-menu {
-    border-radius: 15px;
-    border: none;
-    box-shadow: 0 5px 35px #2321fd1a;
-    animation: fadeInDown .32s cubic-bezier(.82,.09,.19,.97) both;
-}
-@keyframes fadeInDown {
-    from {opacity:0;transform:translateY(-12px);}
-    to {opacity:1;transform:translateY(0);}
-}
-</style>
+
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm py-2" style="background: linear-gradient(90deg,#6157ff 0,#33cfff 100%) !important;">
     <div class="container">

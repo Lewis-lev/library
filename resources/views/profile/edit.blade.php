@@ -1,63 +1,3 @@
-<style>
-    .profile-picture-label {
-        cursor: pointer;
-        display: inline-block;
-        position: relative;
-    }
-
-    .profile-picture-img {
-        width: 96px;
-        height: 96px;
-        object-fit: cover;
-        border: 2px solid #eee;
-        transition: box-shadow 0.2s, transform 0.2s;
-        border-radius: 50%;
-        background: #fafafa;
-    }
-
-    .profile-picture-label:hover .profile-picture-img,
-    .profile-picture-label:focus .profile-picture-img {
-        box-shadow: 0 0 0 4px #bee3f8;
-        transform: scale(1.04);
-        z-index: 2;
-    }
-
-    .profile-picture-overlay {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        backdrop-filter: blur(1.5px);
-        color: #fff;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.23s;
-        font-size: 1.07em;
-        font-weight: 500;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-        z-index: 1;
-        user-select: none;
-    }
-
-    .profile-picture-label:hover .profile-picture-overlay,
-    .profile-picture-label:focus .profile-picture-overlay {
-        opacity: 1;
-        pointer-events: all;
-    }
-
-    .profile-picture-overlay svg {
-        margin-bottom: 5px;
-        color: #cbd5e1;
-    }
-</style>
-
-
 @php
     // Fallback for direct view access; REMOVE if your controller always sets this variable!
     if (!isset($isVerified)) {
@@ -72,6 +12,7 @@
 @section('title', 'Profile Detail')
 
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/editProfile.css') }}">
 <div class="container mt-5">
     <h2 class="mb-4 fw-bold"><i class="fa-solid fa-user"></i> My Profile</h2>
 
@@ -268,98 +209,12 @@
     </div>
 
 </div>
-@endsection
-
 @push('scripts')
 <script>
-    function toggleEditProfile(edit) {
-        document.getElementById('editProfileCard').style.display = edit ? 'block' : 'none';
-        document.getElementById('editProfileBtn').style.display = edit ? 'none' : 'inline-block';
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-
-    function togglePasswordSection(show) {
-        document.getElementById('passwordSection').style.display = show ? 'block' : 'none';
-        document.getElementById('showPasswordSectionBtn').style.display = show ? 'none' : 'inline-block';
-        if (!show) {
-            document.getElementById('current_password').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('password_confirmation').value = '';
-        }
-    }
-
-    function showVerifyError() {
     window.verifyUrl = @json($verifyUrl);
-    // Bootstrap 5: create a temp alert if user not verified
-    let alertHtml = `<div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
-        You must verify your email address before you can edit your profile.
-        Verify <a href="${window.verifyUrl}">here</a>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
-    // Insert after button or at the top
-    let btn = document.getElementById('editProfileBtn');
-    btn.insertAdjacentHTML('afterend', alertHtml);
-    // auto-close
-    setTimeout(function() {
-        let alert = btn.parentNode.querySelector('.alert');
-        if(alert) {
-            alert.classList.remove('show');
-            setTimeout(()=>alert.remove(), 300);
-        }
-    }, 3000);
-}
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Edit Profile Form
-        @if($errors->any())
-        document.getElementById('editProfileCard').style.display = 'block';
-        document.getElementById('editProfileBtn').style.display = 'none';
-        // Auto scroll to bottom
-        setTimeout(function() {
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
-        }, 200);
-        @endif
-
-        // Password Section
-        @if($errors->has('current_password') || $errors->has('password') || $errors->has('password_confirmation'))
-        document.getElementById('passwordSection').style.display = 'block';
-        var showBtn = document.getElementById('showPasswordSectionBtn');
-        if (showBtn) showBtn.style.display = 'none';
-        @endif
-    });
+    window.editProfileShowErrors = {{ $errors->any() ? 'true' : 'false' }};
+    window.editProfileShowPasswordSection = {{ ($errors->has('current_password') || $errors->has('password') || $errors->has('password_confirmation')) ? 'true' : 'false' }};
 </script>
-<script>
-    // Overlay on hover
-    const label = document.querySelector('label[for="profile_picture"]');
-    const img = document.getElementById('profilePicturePreview');
-    function previewProfilePicture(input) {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                img.src = e.target.result;
-            }
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>
-<script>
-    // Auto-close the alert after 3 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handles multiple alerts, if both "status" and "error" present.
-        document.querySelectorAll('.alert[role="alert"]').forEach(function(alert){
-            setTimeout(function() {
-                // Bootstrap's .alert('close') needs jQuery for BS4, but in BS5 you can just remove .show
-                alert.classList.remove('show');
-                // After fade out, remove from dom for cleanliness
-                setTimeout(() => alert.remove(), 300);
-            }, 3000);
-        });
-    });
-</script>
+<script src="{{ asset('js/editProfile.js') }}"></script>
 @endpush
+@endsection

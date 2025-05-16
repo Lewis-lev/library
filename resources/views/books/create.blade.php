@@ -109,17 +109,3 @@
     </form>
 </div>
 @endsection
-
-@push('styles')
-<style>
-    .btn-check:checked + .genre-btn, .genre-btn.active {
-        background-color: #6610f2;
-        color: white;
-        border-color: #4f1783;
-    }
-    .genre-btn {
-        transition: background-color 0.2s;
-        user-select: none;
-    }
-</style>
-@endpush
