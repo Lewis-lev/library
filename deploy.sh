@@ -16,5 +16,8 @@ php artisan migrate --force
 php artisan config:clear
 php artisan config:cache
 
+php artisan route:clear
+php artisan cache:clear
+
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
