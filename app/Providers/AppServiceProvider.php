@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if (env('APP_ENV') == 'production') {
             $url->forceScheme('https');
-            \Illuminate\Http\Request::setTrustedProxies(['*'], \Illuminate\Http\Request::HEADER_X_FORWARDED_ALL);
+            SymfonyRequest::setTrustedProxies(['*'], SymfonyRequest::HEADER_X_FORWARDED_ALL);
         }
     }
 }
