@@ -22,7 +22,13 @@ class AppServiceProvider extends ServiceProvider
     {
         if (env('APP_ENV') == 'production') {
             $url->forceScheme('https');
-            SymfonyRequest::setTrustedProxies(['*'], SymfonyRequest::HEADER_X_FORWARDED_ALL);
+            SymfonyRequest::setTrustedProxies(['*'],
+                SymfonyRequest::HEADER_X_FORWARDED_FOR
+                | SymfonyRequest::HEADER_X_FORWARDED_HOST
+                | SymfonyRequest::HEADER_X_FORWARDED_PROTO
+                | SymfonyRequest::HEADER_X_FORWARDED_PORT
+                | SymfonyRequest::HEADER_X_FORWARDED_PREFIX
+            );
         }
     }
 }
