@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(UrlGenerator $url): void
     {
         if (env('APP_ENV') == 'production') {
-            $url->forceScheme('http');
+            $url->forceScheme('https');
             SymfonyRequest::setTrustedProxies(['*'],
                 SymfonyRequest::HEADER_X_FORWARDED_FOR
                 | SymfonyRequest::HEADER_X_FORWARDED_HOST
