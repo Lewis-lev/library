@@ -9,7 +9,9 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -39,9 +41,26 @@ Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+    // Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    //     ->middleware(['signed', 'throttle:6,1'])
+    //     ->name('verification.verify');
+
+    Route::get('verify-email/{id}/{hash}', function (Request $request, $id, $hash) {
+    Log::info('Verify Email Debug', [
+        'full_url' => $request->fullUrl(),
+        'scheme' => $request->getScheme(),
+        'is_secure' => $request->isSecure(),
+        'host' => $request->getHost(),
+        'trusted_proxies' => $request->getTrustedProxies(),
+        'headers' => $request->headers->all(),
+        'has_valid_signature' => $request->hasValidSignature(),
+    ]);
+    if (! $request->hasValidSignature()) {
+        abort(403, 'Invalid signature (debug)');
+    }
+    // Optionally, call your real controller here
+    return 'Signature valid!';
+})->middleware(['throttle:6,1'])->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
