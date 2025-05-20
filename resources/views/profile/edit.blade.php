@@ -35,7 +35,7 @@
 
             <!-- PROFILE IMAGE -->
             <img
-                src="{{ auth()->user()->profile_picture ? asset('storage/profile_pict/' . auth()->user()->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
+                src="{{ auth()->user()->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . auth()->user()->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
                 class="rounded-circle mb-3 shadow"
                 style="width: 120px; height: 120px; object-fit: cover; background: #f6f9fc;"
                 alt="Profile Picture">
@@ -97,7 +97,7 @@
                     <label for="profile_picture" class="profile-picture-label" tabindex="0" aria-label="Change profile picture">
                         <img
                             id="profilePicturePreview"
-                            src="{{ auth()->user()->profile_picture ? asset('storage/profile_pict/' . auth()->user()->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
+                            src="{{ auth()->user()->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . auth()->user()->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
                             class="rounded-circle mb-2 profile-picture-img"
                             alt="Profile Picture">
                         <span class="profile-picture-overlay" id="profilePictureOverlay">

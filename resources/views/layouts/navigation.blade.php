@@ -73,7 +73,7 @@
                 <li class="nav-item dropdown ms-lg-3">
                     <a class="nav-link dropdown-toggle d-flex align-items-center cool-nav-link" style="cursor:pointer;" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="me-2">{{ auth()->user()->name }}</span>
-                        <img src="{{ auth()->user()->profile_picture ? asset('storage/profile_pict/' . auth()->user()->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
+                        <img src="{{ auth()->user()->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . auth()->user()->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
                             alt="Profile" width="38" height="38" class="rounded-circle border border-3 shadow-sm" style="object-fit:cover;transition:box-shadow .26s;">
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow mt-2" aria-labelledby="profileDropdown">

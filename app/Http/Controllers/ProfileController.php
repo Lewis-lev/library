@@ -52,30 +52,30 @@ class ProfileController extends Controller
 
         if ($request->hasFile('profile_picture')) {
             // Remove previous image if exists
-            if ($user->profile_picture && Storage::disk('public')->exists('profile_pict/' . $user->profile_picture)) {
-                Storage::disk('public')->delete('profile_pict/' . $user->profile_picture);
+            if ($user->profile_picture && Storage::disk('r2')->exists('img/profile_pict/' . $user->profile_picture)) {
+                Storage::disk('r2')->delete('img/profile_pict/' . $user->profile_picture);
             }
 
             $image = $request->file('profile_picture');
             $filename = uniqid('profile_') . '.webp';
-            $relativePath = 'profile_pict/' . $filename;
-            $fullPath = Storage::disk('public')->path($relativePath);
+            $relativePath = 'img/profile_pict/' . $filename;
 
             try {
+                // Convert to webp using GD
                 $imgContent = file_get_contents($image->getRealPath());
                 $gdImage = @imagecreatefromstring($imgContent);
 
                 if ($gdImage) {
-                    if (!file_exists(dirname($fullPath))) {
-                        mkdir(dirname($fullPath), 0755, true);
-                    }
-                    if (!imagewebp($gdImage, $fullPath)) {
-                        imagedestroy($gdImage);
-                        return redirect()->back()->withErrors(['profile_picture' => 'Failed to save image as webp.']);
-                    }
+                    // Output to a temporary stream in webp format
+                    ob_start();
+                    imagewebp($gdImage);
+                    $webpData = ob_get_clean();
                     imagedestroy($gdImage);
 
-                    // Assign filename (no subdir) to DB, similar to how you handle it for books
+                    // Upload to R2 using Laravel Storage
+                    Storage::disk('r2')->put($relativePath, $webpData, 'public');
+
+                    // Assign filename (no subdir) to DB
                     $user->profile_picture = $filename;
                 } else {
                     return redirect()->back()->withErrors(['profile_picture' => 'Failed to process image. Please upload a valid image file.']);
@@ -138,8 +138,8 @@ class ProfileController extends Controller
         }
 
         // Delete associated image file from R2 if exists
-        if ($user_id->image && Storage::disk('r2')->exists('img/book_images/' . $user_id->image)) {
-            Storage::disk('r2')->delete('img/book_images/' . $user_id->image);
+        if ($user_id->profile_picture && Storage::disk('r2')->exists('img/profile_pict/' . $user_id->profile_picture)) {
+            Storage::disk('r2')->delete('img/profile_pict/' . $user_id->profile_picture);
         }
 
         $user_id->delete();

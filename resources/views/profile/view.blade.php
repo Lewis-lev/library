@@ -10,7 +10,7 @@
 <div class="profile-card">
     <div class="profile-banner">
         <img
-            src="{{ $user->profile_picture ? asset('storage/profile_pict/' . $user->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
+            src="{{ $user->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . $user->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
             class="profile-avatar"
             alt="Profile Picture"
         >
