@@ -27,6 +27,7 @@
                             <th scope="col">Name</th>
                             <th scope="col">Email</th>
                             <th scope="col">Phone Number</th>
+                            <th scope="col">Verified</th>
                             <th scope="col">Registered</th>
                             <th scope="col" style="min-width:120px;">Action</th>
                         </tr>
@@ -38,6 +39,13 @@
                             <td>{{ $u->name }}</td>
                             <td>{{ $u->email }}</td>
                             <td>{{ $u->phone_number ?? '-' }}</td>
+                            <td>
+                                @if($u->email_verified_at)
+                                    <span class="badge bg-success"><i class="fa fa-check-circle"></i> Verified</span>
+                                @else
+                                    <span class="badge bg-secondary"><i class="fa fa-times-circle"></i> Unverified</span>
+                                @endif
+                            </td>
                             <td>
                                 {{ $u->created_at ? $u->created_at->format('d M Y H:i') : '-' }}
                             </td>

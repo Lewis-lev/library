@@ -10,7 +10,7 @@
         {{-- Hero Section --}}
         <div class="dashboard-hero d-flex align-items-center mb-4 mt-4 pd-4">
             <img class="user-avatar shadow-sm"
-                src="{{ auth()->user()->profile_picture ? asset('storage/profile_pict/' . auth()->user()->profile_picture) : asset('storage/profile_pict/default-profile.jpg') }}"
+                src="{{ auth()->user()->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . auth()->user()->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
                 alt="Profile">
             <div>
                 <h2>Hi, {{ auth()->user()->name ?? 'Borrower' }}!</h2>
@@ -27,6 +27,14 @@
                     Please return them as soon as possible to avoid fines.
                     <a href="{{ route('books.history') }}" class="ms-2 text-danger text-decoration-underline">View Details</a>
                 </div>
+            </div>
+        @endif
+
+        @if(session('verified'))
+            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <i class="fa fa-check-circle me-2"></i>
+                {{ session('verified') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
