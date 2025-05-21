@@ -37,5 +37,9 @@ Route::middleware(['auth', 'role:borrower', 'verified'])->group(function () {
 
 Route::get('/test/upload', [ImageUploadTestController::class, 'showForm'])->name('test.upload');
 Route::post('/test/upload', [ImageUploadTestController::class, 'upload'])->name('test.upload.store');
+Route::get('/debug-scheme', function (Request $request) {
+    return $request->getScheme(); // returns 'http' or 'https'
+});
+
 
 require __DIR__ . '/auth.php';
