@@ -5,6 +5,7 @@ use App\Http\Controllers\BorrowController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ImageUploadTestController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('index');
