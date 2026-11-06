@@ -4,12 +4,18 @@
 @section('title', 'Borrow History')
 
 @section('content')
-<div class="container mt-5">
-    <h2 class="mb-4 text-center fw-bold"><i class="fa-solid fa-book"></i> Borrow History</h2>
+<div class="container member-history-page">
+    <div class="data-page-heading">
+        <div>
+            <span class="eyebrow"><i class="fa-solid fa-clock-rotate-left me-2"></i>Your reading activity</span>
+            <h1>Borrowing history</h1>
+            <p>Keep track of your requests, current loans, and returned books.</p>
+        </div>
+    </div>
 
     <div class="card shadow mb-4">
         <div class="card-body">
-            <ul class="nav nav-pills mb-4 justify-content-center" id="historyTabs" role="tablist">
+            <ul class="nav nav-pills history-tabs mb-4" id="historyTabs" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="all-tab" data-bs-toggle="pill" href="#all" role="tab">All</a>
                 </li>
@@ -46,8 +52,8 @@
             <div class="tab-content" id="historyTabsContent">
                 @foreach($tabGroups as $tabKey => $borrows)
                 <div class="tab-pane fade {{ $tabKey == 'all' ? 'show active' : '' }}" id="{{ $tabKey }}" role="tabpanel">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover align-middle">
+                    <div class="table-responsive history-table-wrap">
+                        <table class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
                             <tr>
                                 <th>Borrow Code</th>

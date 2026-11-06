@@ -4,10 +4,18 @@
 @section('title', 'User List')
 @section('content')
 
-    <div class="container-fluid mt-5">
-        <h2 class="mb-4 text-center fw-bold">
-            <i class="fa-solid fa-users"></i> User List
-        </h2>
+    <div class="container-fluid admin-data-page">
+        <div class="data-page-heading">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-users me-2"></i>Library members</span>
+                <h1>Member directory</h1>
+                <p>Review member details and account verification.</p>
+            </div>
+            <div class="data-page-count">
+                <span>{{ $user->count() }}</span>
+                <small>{{ \Illuminate\Support\Str::plural('member', $user->count()) }}</small>
+            </div>
+        </div>
 
         {{-- Error message for undeletable admin --}}
         @if(session('error'))
@@ -18,9 +26,23 @@
             </div>
         @endif
 
-        <div class="card shadow">
-            <div class="card-body p-3">
-                <table id="myTable" class="table table-striped table-bordered table-hover align-middle">
+        <div class="card data-table-card">
+            <div class="data-table-toolbar">
+                <label class="table-search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <span class="visually-hidden">Search members</span>
+                    <input type="search" class="form-control" placeholder="Search members..."
+                        data-table-label="member"
+                        data-table-filter="members-table" aria-controls="members-table">
+                </label>
+                <span class="table-search-count" data-table-count="members-table" aria-live="polite">
+                    {{ $user->count() }} {{ \Illuminate\Support\Str::plural('member', $user->count()) }}
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="members-table" class="table table-striped table-hover align-middle">
+                    <caption class="visually-hidden">Library member directory</caption>
                     <thead class="table-dark">
                         <tr>
                             <th scope="col">User ID</th>
@@ -35,28 +57,44 @@
                     <tbody>
                         @forelse ($user as $u)
                         <tr>
-                            <td>{{ $u->user_id }}</td>
-                            <td>{{ $u->name }}</td>
-                            <td>{{ $u->email }}</td>
+                            <td><span class="table-id">#{{ $u->user_id }}</span></td>
+                            <td>
+                                <div class="member-cell">
+                                    <span class="member-avatar">
+                                        @if($u->profile_picture)
+                                            <img
+                                                src="{{ asset('https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . $u->profile_picture) }}"
+                                                alt=""
+                                                loading="lazy"
+                                                onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                                        @endif
+                                        <span @if($u->profile_picture) hidden @endif>
+                                            {{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($u->name, 0, 1)) }}
+                                        </span>
+                                    </span>
+                                    <span class="member-name">{{ $u->name }}</span>
+                                </div>
+                            </td>
+                            <td><a class="table-email" href="mailto:{{ $u->email }}">{{ $u->email }}</a></td>
                             <td>{{ $u->phone_number ?? '-' }}</td>
                             <td>
                                 @if($u->email_verified_at)
-                                    <span class="badge bg-success"><i class="fa fa-check-circle"></i> Verified</span>
+                                    <span class="badge member-status-verified"><i class="fa fa-check-circle me-1"></i>Verified</span>
                                 @else
-                                    <span class="badge bg-secondary"><i class="fa fa-times-circle"></i> Unverified</span>
+                                    <span class="badge member-status-pending"><i class="fa fa-clock me-1"></i>Pending</span>
                                 @endif
                             </td>
                             <td>
                                 {{ $u->created_at ? $u->created_at->format('d M Y H:i') : '-' }}
                             </td>
                             <td>
-                                <a href="{{ route('user.view', ['user_id' => $u->user_id]) }}" class="btn btn-info btn-sm" title="View Details">
+                                <a href="{{ route('user.view', ['user_id' => $u->user_id]) }}" class="btn btn-outline-primary btn-sm" title="View Details" aria-label="View {{ $u->name }}">
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 <form action="{{ route('user.delete', $u->user_id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete" aria-label="Delete {{ $u->name }}">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
@@ -64,12 +102,19 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="9" class="text-center text-muted">No users found.</td>
+                            <td colspan="7" class="table-empty-state">No members found.</td>
                         </tr>
                         @endforelse
+                        @if($user->isNotEmpty())
+                            <tr data-table-no-match hidden>
+                                <td colspan="7" class="table-empty-state">No members match your search.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
+    <script src="{{ asset('js/table-filter.js') }}" defer></script>
 @endsection

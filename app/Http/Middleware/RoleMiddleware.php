@@ -20,7 +20,7 @@ class RoleMiddleware
             return $next($request);
         }
 
-        return abort(403, 'Unautorizhed access.');
+        return abort(403, 'Unauthorized access.');
 
     }
 }

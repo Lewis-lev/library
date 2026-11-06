@@ -1,49 +1,62 @@
-
 @extends('layouts.admin')
 
-@section('title', 'User Profile')
+@section('title', 'Member Profile')
 
 @section('content')
+<div class="container member-profile-page">
+    <a href="{{ url()->previous() }}" class="profile-back-link">
+        <i class="fa-solid fa-arrow-left me-2"></i>Back to members
+    </a>
 
-<link rel="stylesheet" href="{{ asset('css/profileView.css') }}">
+    <article class="member-profile-card">
+        <div class="member-profile-banner">
+            <span class="member-profile-banner-mark"><i class="fa-solid fa-book-open"></i></span>
+        </div>
+        <div class="member-profile-content">
+            <img
+                src="{{ $user->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . $user->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
+                class="member-profile-avatar"
+                alt="Profile picture of {{ $user->name }}"
+            >
+            <div class="member-profile-heading">
+                <span class="eyebrow">Library member</span>
+                <h1>{{ $user->name }}</h1>
+                <div class="member-profile-badges">
+                    <span class="member-role-badge">
+                        <i class="fa-solid fa-user me-1"></i>{{ ucfirst($user->role) }}
+                    </span>
+                    @if($user->email_verified_at)
+                        <span class="member-status-verified">
+                            <i class="fa-solid fa-circle-check me-1"></i>Email verified
+                        </span>
+                    @else
+                        <span class="member-status-pending">
+                            <i class="fa-solid fa-clock me-1"></i>Email not verified
+                        </span>
+                    @endif
+                </div>
+            </div>
 
-<div class="profile-card">
-    <div class="profile-banner">
-        <img
-            src="{{ $user->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . $user->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
-            class="profile-avatar"
-            alt="Profile Picture"
-        >
-    </div>
-    <div class="profile-details">
-        <h2 class="mt-2 mb-1" style="font-weight: 700;">{{ $user->name }}</h2>
-        <span class="profile-role-badge">
-            <i class="fas fa-user-shield"></i> {{ ucfirst($user->role) }}
-        </span>
-        <table class="profile-info-table mt-3">
-            <tr>
-                <td class="icon"><i class="fas fa-envelope"></i></td>
-                <td class="label">Email</td>
-                <td>:</td>
-                <td>{{ $user->email ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="icon"><i class="fas fa-phone"></i></td>
-                <td class="label">Phone</td>
-                <td>:</td>
-                <td>{{ $user->phone_number ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="icon"><i class="fas fa-map-marker-alt"></i></td>
-                <td class="label">Address</td>
-                <td>:</td>
-                <td>{{ $user->address ?? '-' }}</td>
-            </tr>
-        </table>
-    </div>
+            <div class="member-profile-divider"></div>
+            <dl class="member-profile-details">
+                <div class="member-profile-detail">
+                    <dt><i class="fa-solid fa-envelope"></i>Email address</dt>
+                    <dd><a href="mailto:{{ $user->email }}">{{ $user->email ?? 'Not provided' }}</a></dd>
+                </div>
+                <div class="member-profile-detail">
+                    <dt><i class="fa-solid fa-phone"></i>Phone number</dt>
+                    <dd>{{ $user->phone_number ?? 'Not provided' }}</dd>
+                </div>
+                <div class="member-profile-detail">
+                    <dt><i class="fa-solid fa-location-dot"></i>Address</dt>
+                    <dd>{{ $user->address ?? 'Not provided' }}</dd>
+                </div>
+                <div class="member-profile-detail">
+                    <dt><i class="fa-solid fa-calendar-days"></i>Member since</dt>
+                    <dd>{{ $user->created_at ? $user->created_at->format('d M Y') : 'Not available' }}</dd>
+                </div>
+            </dl>
+        </div>
+    </article>
 </div>
-<a href="{{ url()->previous() }}" class="btn back-btn mt-3"><i class="fas fa-arrow-left"></i> Back</a>
-
-<!-- Font Awesome CDN for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 @endsection

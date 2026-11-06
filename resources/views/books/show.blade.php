@@ -14,7 +14,7 @@
         <div class="ol-book-hero">
             <div class="ol-book-cover">
                 @if ($book->image)
-                    <img src="{{ asset('https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/book_images/' . $book->image) }}"
+                    <img src="{{ asset('https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/' . ltrim($book->image, '/')) }}"
                         alt="{{ $book->title }}" style="width: 100%; height: auto; object-fit: cover;">
                 @else
                     <img src="{{ asset('default-book.jpg') }}" alt="No cover" style="width: 100%; height: auto;">

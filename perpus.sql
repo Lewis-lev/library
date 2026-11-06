@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: May 05, 2025 at 02:41 AM
--- Server version: 8.4.3
--- PHP Version: 8.3.16
+-- Host: 127.0.0.1
+-- Generation Time: Nov 05, 2026 at 08:39 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `books` (
-  `book_id` bigint UNSIGNED NOT NULL,
-  `code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `author` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `publisher` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `quantity` int NOT NULL,
-  `image` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `status` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Available',
+  `book_id` bigint(20) UNSIGNED NOT NULL,
+  `code` varchar(100) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `author` varchar(255) NOT NULL,
+  `publisher` varchar(100) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `image` varchar(100) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'Available',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -77,8 +77,8 @@ INSERT INTO `books` (`book_id`, `code`, `title`, `author`, `publisher`, `quantit
 --
 
 CREATE TABLE `book_genre` (
-  `book_id` bigint UNSIGNED NOT NULL,
-  `genre_id` bigint UNSIGNED NOT NULL
+  `book_id` bigint(20) UNSIGNED NOT NULL,
+  `genre_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -87,36 +87,36 @@ CREATE TABLE `book_genre` (
 
 INSERT INTO `book_genre` (`book_id`, `genre_id`) VALUES
 (52, 39),
-(53, 39),
-(54, 39),
-(55, 39),
 (52, 42),
-(53, 42),
-(54, 42),
-(55, 42),
 (52, 44),
-(53, 44),
-(54, 44),
-(55, 44),
 (52, 45),
-(53, 45),
-(54, 45),
-(55, 45),
 (52, 49),
-(53, 49),
-(54, 49),
-(55, 49),
 (52, 50),
-(53, 50),
-(54, 50),
-(55, 50),
 (52, 51),
-(53, 51),
-(54, 51),
-(55, 51),
 (52, 52),
+(53, 39),
+(53, 42),
+(53, 44),
+(53, 45),
+(53, 49),
+(53, 50),
+(53, 51),
 (53, 52),
+(54, 39),
+(54, 42),
+(54, 44),
+(54, 45),
+(54, 49),
+(54, 50),
+(54, 51),
 (54, 52),
+(55, 39),
+(55, 42),
+(55, 44),
+(55, 45),
+(55, 49),
+(55, 50),
+(55, 51),
 (55, 52);
 
 -- --------------------------------------------------------
@@ -126,15 +126,15 @@ INSERT INTO `book_genre` (`book_id`, `genre_id`) VALUES
 --
 
 CREATE TABLE `borrows` (
-  `borrow_id` bigint UNSIGNED NOT NULL,
-  `borrow_code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint UNSIGNED NOT NULL,
-  `book_id` bigint UNSIGNED NOT NULL,
-  `status` enum('pending','approved','rejected','returned') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
-  `borrow_duration` int NOT NULL,
-  `borrow_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `borrow_id` bigint(20) UNSIGNED NOT NULL,
+  `borrow_code` varchar(100) NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `book_id` bigint(20) UNSIGNED NOT NULL,
+  `status` enum('pending','approved','rejected','returned') NOT NULL DEFAULT 'pending',
+  `borrow_duration` int(11) NOT NULL,
+  `borrow_date` datetime NOT NULL DEFAULT current_timestamp(),
   `return_date` date DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -160,9 +160,9 @@ INSERT INTO `borrows` (`borrow_id`, `borrow_code`, `user_id`, `book_id`, `status
 --
 
 CREATE TABLE `cache` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `value` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -190,9 +190,9 @@ INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
 --
 
 CREATE TABLE `cache_locks` (
-  `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `owner` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `expiration` int NOT NULL
+  `key` varchar(255) NOT NULL,
+  `owner` varchar(255) NOT NULL,
+  `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -202,13 +202,13 @@ CREATE TABLE `cache_locks` (
 --
 
 CREATE TABLE `failed_jobs` (
-  `id` bigint UNSIGNED NOT NULL,
-  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) NOT NULL,
+  `connection` text NOT NULL,
+  `queue` text NOT NULL,
+  `payload` longtext NOT NULL,
+  `exception` longtext NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -239,8 +239,8 @@ INSERT INTO `failed_jobs` (`id`, `uuid`, `connection`, `queue`, `payload`, `exce
 --
 
 CREATE TABLE `genres` (
-  `genre_id` bigint UNSIGNED NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `genre_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -277,13 +277,13 @@ INSERT INTO `genres` (`genre_id`, `name`, `created_at`, `updated_at`) VALUES
 --
 
 CREATE TABLE `jobs` (
-  `id` bigint UNSIGNED NOT NULL,
-  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attempts` tinyint UNSIGNED NOT NULL,
-  `reserved_at` int UNSIGNED DEFAULT NULL,
-  `available_at` int UNSIGNED NOT NULL,
-  `created_at` int UNSIGNED NOT NULL
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `queue` varchar(255) NOT NULL,
+  `payload` longtext NOT NULL,
+  `attempts` tinyint(3) UNSIGNED NOT NULL,
+  `reserved_at` int(10) UNSIGNED DEFAULT NULL,
+  `available_at` int(10) UNSIGNED NOT NULL,
+  `created_at` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -293,16 +293,16 @@ CREATE TABLE `jobs` (
 --
 
 CREATE TABLE `job_batches` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `total_jobs` int NOT NULL,
-  `pending_jobs` int NOT NULL,
-  `failed_jobs` int NOT NULL,
-  `failed_job_ids` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `options` mediumtext COLLATE utf8mb4_unicode_ci,
-  `cancelled_at` int DEFAULT NULL,
-  `created_at` int NOT NULL,
-  `finished_at` int DEFAULT NULL
+  `id` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `total_jobs` int(11) NOT NULL,
+  `pending_jobs` int(11) NOT NULL,
+  `failed_jobs` int(11) NOT NULL,
+  `failed_job_ids` longtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `cancelled_at` int(11) DEFAULT NULL,
+  `created_at` int(11) NOT NULL,
+  `finished_at` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -312,9 +312,9 @@ CREATE TABLE `job_batches` (
 --
 
 CREATE TABLE `migrations` (
-  `id` int UNSIGNED NOT NULL,
-  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `batch` int NOT NULL
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) NOT NULL,
+  `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -340,11 +340,11 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `notifications` (
-  `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `notifiable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `notifiable_id` bigint UNSIGNED NOT NULL,
-  `data` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` char(36) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `notifiable_type` varchar(255) NOT NULL,
+  `notifiable_id` bigint(20) UNSIGNED NOT NULL,
+  `data` text NOT NULL,
   `read_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -357,8 +357,8 @@ CREATE TABLE `notifications` (
 --
 
 CREATE TABLE `password_reset_tokens` (
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -369,12 +369,12 @@ CREATE TABLE `password_reset_tokens` (
 --
 
 CREATE TABLE `sessions` (
-  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint UNSIGNED DEFAULT NULL,
-  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_agent` text COLLATE utf8mb4_unicode_ci,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_activity` int NOT NULL
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -396,16 +396,16 @@ INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, 
 --
 
 CREATE TABLE `users` (
-  `user_id` bigint UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
-  `phone_number` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` varchar(10000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `profile_picture` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('admin','borrower') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'borrower',
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` varchar(100) DEFAULT NULL,
+  `address` varchar(10000) DEFAULT NULL,
+  `profile_picture` varchar(100) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','borrower') NOT NULL DEFAULT 'borrower',
+  `remember_token` varchar(100) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -415,10 +415,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `name`, `email`, `email_verified_at`, `phone_number`, `address`, `profile_picture`, `password`, `role`, `remember_token`, `created_at`, `updated_at`) VALUES
-(2, 'Admin User', 'admin@example.com', NULL, NULL, NULL, NULL, '$2y$12$l.b.f9qgzltXBoFW1xRRFeGQ0lY/HSWfNHkCk2iKqL6p9ABLwU5tS', 'admin', NULL, '2025-03-05 01:47:28', '2025-03-05 01:47:28'),
-(16, 'fadhil', 'madanishofa@gmail.com', '2025-04-30 11:36:12', '123123123123', 'Jl. Gempol Raya No.2a, Gempol, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281', NULL, '$2y$12$o48yMv0mmzmfJMh/Wm65vOhr1Tpg7Yxk5wU4Pi0JeiIk1KMfrxd3i', 'borrower', NULL, '2025-04-30 11:35:10', '2025-04-30 11:36:40'),
+(16, 'Lewis', 'madanishofa@gmail.com', '2025-04-30 11:36:12', '123123123123', 'Jl. Gempol Raya No.2a, Gempol, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281', 'profile_6ae727cc9aa7c.webp', '$2y$12$0ujMMYMotHQVqLth.lXTb.q.6/px1y7d8SeNva9ugvv5bFFwLqEnC', 'borrower', 'VgCpmZ0b46ZGjRrE1XyrdIbfWUAh1PPmttveJqkWvlvfp32dPaguQfPGXnfs', '2025-04-30 11:35:10', '2026-11-01 13:26:51'),
 (17, 'lewis', 'iotanine69@gmail.com', NULL, NULL, NULL, NULL, '$2y$12$11WEKNMUL7bnDVVMbtYt.O/7Az0nxWrK7jcgeTZZzBdcJh3H1rFvm', 'borrower', NULL, '2025-05-02 03:25:59', '2025-05-02 03:25:59'),
-(18, 'Sepep', 'posterashit@gmail.com', '2025-05-02 16:01:38', '123123123123', 'Jl. Gempol Raya No.2a, Gempol, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281', 'profile_6814ecaf5c2fb.webp', '$2y$12$gB3rULuJ3yEqYNiUlRjuHOcg/A/1Mt3HIwpx7oOY8bZfujCwoJ8R2', 'borrower', NULL, '2025-05-02 15:59:56', '2025-05-02 16:02:56');
+(18, 'Sepep', 'posterashit@gmail.com', '2025-05-02 16:01:38', '123123123123', 'Jl. Gempol Raya No.2a, Gempol, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281', 'profile_6814ecaf5c2fb.webp', '$2y$12$gB3rULuJ3yEqYNiUlRjuHOcg/A/1Mt3HIwpx7oOY8bZfujCwoJ8R2', 'borrower', NULL, '2025-05-02 15:59:56', '2025-05-02 16:02:56'),
+(19, 'Admin User', 'admin@example.com', NULL, NULL, NULL, NULL, '$2y$12$Fq4DZijg1ybxopoGDr7GdOG3seWNo01UN0guWdNbGb8Wn/p0d8LFW', 'admin', NULL, '2026-11-01 11:39:58', '2026-11-01 11:39:58');
 
 --
 -- Indexes for dumped tables
@@ -527,43 +527,43 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `books`
 --
 ALTER TABLE `books`
-  MODIFY `book_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+  MODIFY `book_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
 -- AUTO_INCREMENT for table `borrows`
 --
 ALTER TABLE `borrows`
-  MODIFY `borrow_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `borrow_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `genres`
 --
 ALTER TABLE `genres`
-  MODIFY `genre_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `genre_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `user_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Constraints for dumped tables

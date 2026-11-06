@@ -86,6 +86,7 @@
             @endphp
 
             @if($nonRejectedBorrows->count() > 0)
+                <div class="table-responsive">
                 <table class="dashboard-table">
                     <thead>
                         <tr>
@@ -114,6 +115,8 @@
                         @endforeach
                     </tbody>
                 </table>
+                <br>
+                </div>
             @else
                 <div class="text-muted mb-4">
                     You have not borrowed any books recently.

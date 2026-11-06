@@ -3,8 +3,14 @@
 @section('title', 'Borrow Book')
 @section('content')
 
-    <div class="container-fluid mt-5">
-        <h2 class="mb-4 text-center fw-bold"><i class="fa-solid fa-book"></i> Log Borrow</h2>
+    <div class="container-fluid admin-data-page">
+        <div class="data-page-heading">
+            <div>
+                <span class="eyebrow"><i class="fa-solid fa-book-open me-2"></i>Circulation</span>
+                <h1>Borrow requests</h1>
+                <p>Review requests, update loan status, and track returns.</p>
+            </div>
+        </div>
 
         @if(auth()->check() && auth()->user()->role === 'admin')
             <div class="mb-3 d-flex justify-content-end">
@@ -18,9 +24,23 @@
             </div>
         @endif
 
-        <div class="card shadow">
-            <div class="card-body p-3">
-                <table id="myTable" class="table table-striped table-bordered table-hover">
+        <div class="card data-table-card">
+            <div class="data-table-toolbar">
+                <label class="table-search">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <span class="visually-hidden">Search borrow requests</span>
+                    <input type="search" class="form-control" placeholder="Search requests..."
+                        data-table-label="request"
+                        data-table-filter="borrow-requests-table" aria-controls="borrow-requests-table">
+                </label>
+                <span class="table-search-count" data-table-count="borrow-requests-table" aria-live="polite">
+                    {{ $borrows->count() }} {{ \Illuminate\Support\Str::plural('request', $borrows->count()) }}
+                </span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                <table id="borrow-requests-table" class="table table-striped table-hover align-middle">
+                    <caption class="visually-hidden">Library book borrowing requests</caption>
                     <thead class="table-dark">
                         <tr>
                             <th>Borrow Code</th>
@@ -56,7 +76,7 @@
                                     </td>
                                     <td class="text-center">{{ $borrow->created_at ? $borrow->created_at->format('d M Y H:i') : '-' }}</td>
                                     <td class="text-center">{{ $borrow->borrow_date ? \Carbon\Carbon::parse($borrow->borrow_date)->format('d M Y H:i') : '-' }}</td>
-                                    <td class="text-center"><b>{{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('d M Y') : '-' }}</td>
+                                    <td class="text-center">{{ $borrow->return_date ? \Carbon\Carbon::parse($borrow->return_date)->format('d M Y') : '-' }}</td>
                                     <td>
                                     @if($borrow->status === 'pending')
                                         <form action="{{ route('borrows.approve', $borrow->borrow_id) }}" method="POST" class="d-inline">
@@ -86,9 +106,20 @@
                                     </td>
                                 </tr>
                         @endforeach
+                        @if($borrows->isEmpty())
+                            <tr>
+                                <td colspan="10" class="table-empty-state">No borrow requests yet.</td>
+                            </tr>
+                        @else
+                            <tr data-table-no-match hidden>
+                                <td colspan="10" class="table-empty-state">No requests match your search.</td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
+    <script src="{{ asset('js/table-filter.js') }}" defer></script>
 @endsection

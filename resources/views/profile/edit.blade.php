@@ -13,8 +13,14 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/editProfile.css') }}">
-<div class="container mt-5">
-    <h2 class="mb-4 fw-bold"><i class="fa-solid fa-user"></i> My Profile</h2>
+<div class="container profile-edit-page">
+    <div class="data-page-heading">
+        <div>
+            <span class="eyebrow"><i class="fa-solid fa-user me-2"></i>Your account</span>
+            <h1>My profile</h1>
+            <p>Manage your contact details and account security.</p>
+        </div>
+    </div>
 
     <!-- Show session alerts, if any -->
     @if(session('status'))
@@ -30,61 +36,44 @@
     </div>
     @endif
 
-    <div class="card mx-auto shadow-sm">
-        <div class="card-body text-center p-4">
-
-            <!-- PROFILE IMAGE -->
+    <div class="card profile-summary-card">
+        <div class="profile-summary-identity">
             <img
                 src="{{ auth()->user()->profile_picture ? asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/' . auth()->user()->profile_picture) : asset(path: 'https://pub-94f23dc765bc4b62a5ef536b35ffa982.r2.dev/img/profile_pict/default-profile.webp') }}"
-                class="rounded-circle mb-3 shadow"
-                style="width: 120px; height: 120px; object-fit: cover; background: #f6f9fc;"
-                alt="Profile Picture">
-
-            <!-- "COOLER" PROFILE INFO CARD -->
-            <div class="mx-auto mb-4">
-                <div class="list-group list-group-flush gap-2">
-                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
-
-                        <div class="flex-fill">
-                            <span class="fw-semibold">Name</span>
-                            <div class="text-muted small">{{ auth()->user()->name }}</div>
-                        </div>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
-
-                        <div class="flex-fill">
-                            <span class="fw-semibold">Email</span>
-                            <div class="text-muted small">{{ auth()->user()->email }}</div>
-                        </div>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
-
-                        <div class="flex-fill">
-                            <span class="fw-semibold">Phone</span>
-                            <div class="text-muted small">{{ auth()->user()->phone_number ?? '-' }}</div>
-                        </div>
-                    </div>
-                    <div class="list-group-item d-flex align-items-center bg-light border-0 mb-1 rounded shadow-sm">
-
-                        <div class="flex-fill">
-                            <span class="fw-semibold">Address</span>
-                            <div class="text-muted small">{{ auth()->user()->address ?? '-' }}</div>
-                        </div>
-                    </div>
-                </div>
+                class="profile-summary-avatar"
+                alt="Profile picture">
+            <div>
+                <span class="eyebrow">Library member</span>
+                <h2>{{ auth()->user()->name }}</h2>
+                <span class="member-role-badge"><i class="fa-solid fa-bookmark me-1"></i>Borrower</span>
             </div>
-
-            <!-- SHOW EDIT BUTTON -->
             @if($isVerified)
-                <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="toggleEditProfile(true)">Edit Profile</button>
+                <button id="editProfileBtn" class="btn btn-primary profile-edit-toggle" onclick="toggleEditProfile(true)">
+                    <i class="fa-solid fa-pen me-2"></i>Edit profile
+                </button>
             @else
-                <button id="editProfileBtn" class="btn btn-primary mb-2" onclick="showVerifyError()" type="button">Edit Profile</button>
+                <button id="editProfileBtn" class="btn btn-primary profile-edit-toggle" onclick="showVerifyError()" type="button">
+                    <i class="fa-solid fa-pen me-2"></i>Edit profile
+                </button>
             @endif
+        </div>
+        <div class="profile-summary-details">
+            <div class="profile-summary-detail">
+                <span><i class="fa-solid fa-envelope me-2"></i>Email address</span>
+                <strong>{{ auth()->user()->email }}</strong>
+            </div>
+            <div class="profile-summary-detail">
+                <span><i class="fa-solid fa-phone me-2"></i>Phone number</span>
+                <strong>{{ auth()->user()->phone_number ?? 'Not provided' }}</strong>
+            </div>
+            <div class="profile-summary-detail">
+                <span><i class="fa-solid fa-location-dot me-2"></i>Address</span>
+                <strong>{{ auth()->user()->address ?? 'Not provided' }}</strong>
+            </div>
         </div>
     </div>
 
-    <!-- [rest of your edit form stays the same as before] -->
-    <div class="card mx-auto mt-4"
+    <div class="card profile-editor-card mx-auto mt-4"
         style="@if ($errors->any()) display:block; @else display:none; @endif"
         id="editProfileCard">
         <div class="card-body">
